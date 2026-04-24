@@ -1,0 +1,437 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro'
+import SectionLayout from '@/layouts/SectionLayout.astro'
+
+// Atoms
+import Alert from '@/components/atoms/Alert.astro'
+import Avatar from '@/components/atoms/Avatar.astro'
+import Badge from '@/components/atoms/Badge.astro'
+import Blockquote from '@/components/atoms/Blockquote.astro'
+import Button from '@/components/atoms/Button.astro'
+import DateBadge from '@/components/atoms/DateBadge.astro'
+import Divider from '@/components/atoms/Divider.astro'
+import List from '@/components/atoms/List.astro'
+import PostMeta from '@/components/atoms/PostMeta.astro'
+import Text from '@/components/atoms/Text.astro'
+
+// Molecules
+import Card from '@/components/molecules/Card.astro'
+import ContactInfoItem from '@/components/molecules/ContactInfoItem.astro'
+import PortfolioCard from '@/components/molecules/PortfolioCard.astro'
+import SocialLink from '@/components/molecules/SocialLink.astro'
+import TagItem from '@/components/molecules/TagItem.astro'
+import TeamMemberCard from '@/components/molecules/TeamMemberCard.astro'
+
+// Islands
+import { Accordion } from '@/components/islands/Accordion'
+import { Carousel } from '@/components/islands/Carousel'
+import { Counter } from '@/components/islands/Counter'
+import { Tabs } from '@/components/islands/Tabs'
+import { SubscribeForm } from '@/components/islands/SubscribeForm'
+import { ContactForm } from '@/components/islands/ContactForm'
+
+// Organisms
+import Hero from '@/components/organisms/Hero.astro'
+import MapEmbed from '@/components/organisms/MapEmbed.astro'
+import ServicesGrid from '@/components/organisms/ServicesGrid.astro'
+import SkillsSection from '@/components/organisms/SkillsSection.astro'
+import StatsSection from '@/components/organisms/StatsSection.astro'
+import SubscribeBar from '@/components/organisms/SubscribeBar.astro'
+import Testimonials from '@/components/organisms/Testimonials.astro'
+import PortfolioGrid from '@/components/organisms/PortfolioGrid.astro'
+
+// Data
+import { SHOWCASE_IMAGES, SHOWCASE_VIDEOS } from '@/lib/showcase-assets'
+import { teamMembers } from '@/lib/data/team'
+
+// Showcase data
+const tabsData = [
+  { id: 'branding',  label: 'Branding',  icon: '🎨', content: 'Creamos identidades visuales que comunican la esencia de tu marca: logotipos, paletas de color y sistemas de diseño coherentes.' },
+  { id: 'packaging', label: 'Packaging', icon: '📦', content: 'Empaques que destacan en el punto de venta. Diseñamos soluciones creativas y funcionales para productos de consumo masivo.' },
+  { id: 'editorial', label: 'Editorial', icon: '📖', content: 'Catálogos, revistas y brochures con diagramación profesional que comunica con claridad y elegancia.' },
+]
+
+const accordionData = [
+  { id: '1', title: '¿Cuánto tiempo tarda un proyecto de branding?', content: 'Dependiendo del alcance, un proyecto de identidad visual toma entre 2 y 6 semanas. Iniciamos con un brief detallado para asegurar que el resultado supere las expectativas.' },
+  { id: '2', title: '¿Qué incluye el servicio de packaging?', content: 'Incluye: conceptualización, diseño estructural, diagramación editorial, prueba de color y archivos listos para imprenta en todos los formatos requeridos.' },
+  { id: '3', title: '¿Trabajan con clientes fuera de Colombia?', content: 'Sí. Trabajamos con clientes en toda América Latina y Estados Unidos. El proceso es 100% digital y las reuniones se hacen por videollamada.' },
+  { id: '4', title: '¿Cuál es el proceso de trabajo?', content: 'Brief → Propuesta → Diseño conceptual → Revisiones (hasta 3 rondas) → Entrega final con todos los archivos y manual de marca.' },
+]
+
+const carouselSlides = SHOWCASE_IMAGES.portfolio.slice(0, 6).map((src, i) => ({
+  src,
+  alt: `Proyecto de portafolio ${i + 1}`,
+}))
+---
+
+<PageLayout
+  title="Componentes · Showcase"
+  description="Biblioteca visual de componentes GrafiVisión. Paleta, tipografía, botones, cards, formularios y secciones."
+  noindex
+>
+  <!-- ─── HERO ─────────────────────────────────────────────── -->
+  <Hero />
+
+  <!-- ─── 1. DESIGN TOKENS ─────────────────────────────────── -->
+  <SectionLayout id="tokens" class="bg-surface-raised">
+    <div class="mb-10">
+      <Text as="label">01 — Design Tokens</Text>
+      <Text as="h2" class="mt-2">Paleta & Tipografía</Text>
+    </div>
+
+    <!-- Colors -->
+    <div class="mb-10">
+      <Text as="h4" class="mb-5">Colores de Marca</Text>
+      <div class="flex flex-wrap gap-3">
+        {[
+          { token: 'brand-red',    hex: '#E8222B', label: 'Brand Red' },
+          { token: 'brand-orange', hex: '#FF6B2C', label: 'Brand Orange' },
+          { token: 'brand-pink',   hex: '#FF2D6B', label: 'Brand Pink' },
+        ].map((c) => (
+          <div class="flex flex-col items-center gap-2">
+            <div
+              class="h-16 w-16 rounded-xl shadow-md"
+              style={`background-color: ${c.hex}`}
+              title={c.token}
+            />
+            <span class="text-xs text-text-muted">{c.label}</span>
+            <span class="text-xs font-mono text-text-muted">{c.hex}</span>
+          </div>
+        ))}
+      </div>
+      <div class="mt-5 flex flex-wrap gap-3">
+        {[
+          { hex: '#0B0B0B', label: 'Surface Base' },
+          { hex: '#161616', label: 'Surface Raised' },
+          { hex: '#222222', label: 'Surface Overlay' },
+          { hex: '#2E2E2E', label: 'Border' },
+          { hex: '#F8F8F8', label: 'Light Base' },
+        ].map((c) => (
+          <div class="flex flex-col items-center gap-2">
+            <div
+              class="h-16 w-16 rounded-xl border border-surface-border shadow-md"
+              style={`background-color: ${c.hex}`}
+              title={c.hex}
+            />
+            <span class="text-xs text-text-muted">{c.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <Divider />
+
+    <!-- Typography -->
+    <div class="mt-10">
+      <Text as="h4" class="mb-6">Escala Tipográfica</Text>
+      <div class="space-y-4">
+        <Text as="h1">H1 — Display 7xl</Text>
+        <Text as="h2">H2 — Display 5xl</Text>
+        <Text as="h3">H3 — Display 3xl</Text>
+        <Text as="h4">H4 — Display 2xl</Text>
+        <Text as="p">Párrafo — Body text con Inter, color secundario, leading relaxed. Texto de ejemplo para visualizar la tipografía base del sistema.</Text>
+        <Text as="label">Label — Uppercase tracking</Text>
+      </div>
+    </div>
+  </SectionLayout>
+
+  <!-- ─── 2. BUTTONS ───────────────────────────────────────── -->
+  <SectionLayout id="buttons">
+    <Text as="label" class="mb-4 block">02 — Botones</Text>
+    <Text as="h2" class="mb-8">Variantes & Tamaños</Text>
+
+    <div class="flex flex-wrap gap-4 mb-6">
+      <Button variant="primary"  size="lg">Primary Large</Button>
+      <Button variant="primary"  size="md">Primary Medium</Button>
+      <Button variant="primary"  size="sm">Primary Small</Button>
+    </div>
+    <div class="flex flex-wrap gap-4 mb-6">
+      <Button variant="outline"  size="lg">Outline Large</Button>
+      <Button variant="outline"  size="md">Outline Medium</Button>
+      <Button variant="outline"  size="sm">Outline Small</Button>
+    </div>
+    <div class="flex flex-wrap gap-4 mb-6">
+      <Button variant="ghost"    size="md">Ghost</Button>
+      <Button variant="dark"     size="md">Dark</Button>
+      <Button variant="pill"     size="md">Pill</Button>
+      <Button variant="primary"  size="md" disabled>Disabled</Button>
+    </div>
+  </SectionLayout>
+
+  <!-- ─── 3. ALERTS ───────────────────────────────────────── -->
+  <SectionLayout class="bg-surface-raised">
+    <Text as="label" class="mb-4 block">03 — Alertas</Text>
+    <Text as="h2" class="mb-8">Info Boxes</Text>
+    <div class="flex flex-col gap-4 max-w-xl">
+      <Alert variant="success" dismissible>Proyecto guardado correctamente. Los cambios están activos.</Alert>
+      <Alert variant="error"   dismissible>Error al procesar la solicitud. Intenta nuevamente.</Alert>
+      <Alert variant="warning" dismissible>Tu sesión expirará en 5 minutos.</Alert>
+      <Alert variant="info">Recuerda completar tu perfil para mayor visibilidad.</Alert>
+    </div>
+  </SectionLayout>
+
+  <!-- ─── 4. LISTS & DIVIDERS ──────────────────────────────── -->
+  <SectionLayout>
+    <Text as="label" class="mb-4 block">04 — Listas & Divisores</Text>
+    <Text as="h2" class="mb-8">Variantes</Text>
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-3 mb-10">
+      <div>
+        <Text as="h5" class="mb-4">Splash</Text>
+        <List variant="splash">
+          <li>Identidad visual completa</li>
+          <li>Manual de marca</li>
+          <li>Paleta de colores</li>
+          <li>Tipografías seleccionadas</li>
+        </List>
+      </div>
+      <div>
+        <Text as="h5" class="mb-4">Round</Text>
+        <List variant="round">
+          <li>Diseño de empaque</li>
+          <li>Prueba de impresión</li>
+          <li>Archivos finales</li>
+          <li>Soporte post-entrega</li>
+        </List>
+      </div>
+      <div>
+        <Text as="h5" class="mb-4">Angle</Text>
+        <List variant="angle">
+          <li>Flyers y afiches</li>
+          <li>Banners digitales</li>
+          <li>Material POP</li>
+          <li>Vallas publicitarias</li>
+        </List>
+      </div>
+    </div>
+    <div class="flex flex-col gap-4 max-w-md">
+      <Divider />
+      <Divider variant="accent" />
+      <Divider variant="accent-thick" />
+    </div>
+  </SectionLayout>
+
+  <!-- ─── 5. BADGES & TAGS ─────────────────────────────────── -->
+  <SectionLayout class="bg-surface-raised">
+    <Text as="label" class="mb-4 block">05 — Badges & Tags</Text>
+    <Text as="h2" class="mb-8">Etiquetas</Text>
+    <div class="flex flex-wrap gap-3 mb-6">
+      <Badge variant="red">Branding</Badge>
+      <Badge variant="orange">Packaging</Badge>
+      <Badge variant="pink">Editorial</Badge>
+      <Badge variant="success">Entregado</Badge>
+      <Badge variant="muted">Archivado</Badge>
+      <Badge variant="default">Default</Badge>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <TagItem label="Branding" count={12} href="#" />
+      <TagItem label="Packaging" count={8}  href="#" />
+      <TagItem label="Publicidad" count={15} href="#" />
+      <TagItem label="Editorial" count={6}  href="#" />
+      <TagItem label="Logotipos" count={20} href="#" />
+    </div>
+  </SectionLayout>
+
+  <!-- ─── 6. BLOCKQUOTE & META ──────────────────────────────── -->
+  <SectionLayout>
+    <Text as="label" class="mb-4 block">06 — Blockquote & PostMeta</Text>
+    <Text as="h2" class="mb-8">Componentes de Contenido</Text>
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+      <div class="flex flex-col gap-6">
+        <Blockquote author="Carlos Rodríguez" company="Empresa Industrial S.A.S.">
+          GrafiVisión transformó completamente la imagen de nuestra empresa.
+          El resultado superó todas nuestras expectativas.
+        </Blockquote>
+        <div class="flex gap-4 items-center">
+          <DateBadge date="2026-04-15" />
+          <DateBadge date="2025-12-01" />
+        </div>
+      </div>
+      <div class="flex flex-col gap-4">
+        <PostMeta
+          date="2026-04-15"
+          author="GrafiVisión"
+          category="Branding"
+          readTime="3 min"
+        />
+        <div class="flex gap-3">
+          <Avatar alt="Carlos Rodríguez" size="sm" />
+          <Avatar alt="Ana Torres" size="md" />
+          <Avatar alt="Felipe Gómez" size="lg" />
+        </div>
+        <div class="flex gap-3">
+          <SocialLink platform="instagram" href="#" label />
+          <SocialLink platform="behance"   href="#" label />
+          <SocialLink platform="linkedin"  href="#" label />
+        </div>
+      </div>
+    </div>
+  </SectionLayout>
+
+  <!-- ─── 7. TABS ──────────────────────────────────────────── -->
+  <SectionLayout class="bg-surface-raised">
+    <Text as="label" class="mb-4 block">07 — Tabs</Text>
+    <Text as="h2" class="mb-8">Tabs con íconos</Text>
+    <div class="max-w-xl">
+      <Tabs client:visible tabs={tabsData} />
+    </div>
+  </SectionLayout>
+
+  <!-- ─── 8. ACCORDION ─────────────────────────────────────── -->
+  <SectionLayout>
+    <Text as="label" class="mb-4 block">08 — Acordeón</Text>
+    <Text as="h2" class="mb-8">Preguntas frecuentes</Text>
+    <div class="max-w-xl">
+      <Accordion client:visible items={accordionData} />
+    </div>
+  </SectionLayout>
+
+  <!-- ─── 9. CAROUSEL ──────────────────────────────────────── -->
+  <SectionLayout class="bg-surface-raised">
+    <Text as="label" class="mb-4 block">09 — Carrusel</Text>
+    <Text as="h2" class="mb-8">Galería de imágenes</Text>
+    <div class="max-w-3xl">
+      <Carousel client:visible slides={carouselSlides} loop autoplay autoplayDelay={3500} />
+    </div>
+  </SectionLayout>
+
+  <!-- ─── 10. SKILL BARS ───────────────────────────────────── -->
+  <SkillsSection />
+
+  <!-- ─── 11. COUNTERS ─────────────────────────────────────── -->
+  <SectionLayout>
+    <Text as="label" class="mb-4 block">11 — Contadores animados</Text>
+    <Text as="h2" class="mb-10">En números</Text>
+    <div class="grid grid-cols-2 gap-8 xl:grid-cols-4">
+      <Counter client:visible target={12}  suffix="+"  label="Años de experiencia" />
+      <Counter client:visible target={350} suffix="+"  label="Proyectos completados" />
+      <Counter client:visible target={120} suffix="+"  label="Clientes satisfechos" />
+      <Counter client:visible target={100} suffix="%" label="Compromiso creativo" />
+    </div>
+  </SectionLayout>
+
+  <!-- ─── 12. VIDEO ────────────────────────────────────────── -->
+  <SectionLayout class="bg-surface-raised">
+    <Text as="label" class="mb-4 block">12 — Video</Text>
+    <Text as="h2" class="mb-8">Nuestras máquinas</Text>
+    <div class="max-w-3xl overflow-hidden rounded-xl">
+      <video
+        src={SHOWCASE_VIDEOS.hero}
+        controls
+        preload="metadata"
+        class="w-full rounded-xl"
+        aria-label="Video de maquinaria GrafiVisión"
+      >
+        Tu navegador no soporta video HTML5.
+      </video>
+    </div>
+  </SectionLayout>
+
+  <!-- ─── 13. PORTFOLIO CARDS ──────────────────────────────── -->
+  <SectionLayout>
+    <Text as="label" class="mb-4 block">13 — Cards de portafolio</Text>
+    <Text as="h2" class="mb-8">Portfolio Cards</Text>
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+      {SHOWCASE_IMAGES.portfolio.slice(0, 4).map((src, i) => (
+        <PortfolioCard
+          title={`Proyecto ${i + 1}`}
+          category={(['branding','packaging','publicidad','editorial'] as const)[i % 4]}
+          image={src}
+          href="#"
+        />
+      ))}
+    </div>
+  </SectionLayout>
+
+  <!-- ─── 14. GENERIC CARDS ────────────────────────────────── -->
+  <SectionLayout class="bg-surface-raised">
+    <Text as="label" class="mb-4 block">14 — Cards genéricas</Text>
+    <Text as="h2" class="mb-8">Card Component</Text>
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+      <Card
+        title="Identidad Visual Corporativa"
+        description="Desarrollo completo de identidad visual para empresa del sector industrial con manual de marca."
+        image={SHOWCASE_IMAGES.portfolio[0]}
+        href="#"
+        badge="Branding"
+      />
+      <Card
+        title="Packaging Gourmet"
+        description="Línea de empaques premium para productos alimenticios de exportación."
+        image={SHOWCASE_IMAGES.portfolio[2]}
+        href="#"
+        badge="Packaging"
+      />
+      <Card
+        title="Campaña Publicitaria"
+        description="Material completo para campaña de temporada: digital, impreso y exterior."
+        image={SHOWCASE_IMAGES.portfolio[4]}
+        href="#"
+        badge="Publicidad"
+      />
+    </div>
+  </SectionLayout>
+
+  <!-- ─── 15. SERVICE ITEMS ────────────────────────────────── -->
+  <ServicesGrid />
+
+  <!-- ─── 16. TEAM CARDS ───────────────────────────────────── -->
+  <SectionLayout class="bg-surface-raised">
+    <Text as="label" class="mb-4 block">16 — Team Member Cards</Text>
+    <Text as="h2" class="mb-8">Equipo</Text>
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+      {teamMembers.map((member) => (
+        <TeamMemberCard {...member} />
+      ))}
+    </div>
+  </SectionLayout>
+
+  <!-- ─── 17. CONTACT INFO ─────────────────────────────────── -->
+  <SectionLayout>
+    <Text as="label" class="mb-4 block">17 — Contact Info Items</Text>
+    <Text as="h2" class="mb-8">Información de contacto</Text>
+    <div class="flex flex-col gap-6 max-w-sm">
+      <ContactInfoItem icon="mail"    label="Email"      value="info@grafivision.com.co" href="mailto:info@grafivision.com.co" />
+      <ContactInfoItem icon="phone"   label="Teléfono"   value="+57 (xxx) xxx-xxxx"     href="tel:+57xxx" />
+      <ContactInfoItem icon="map-pin" label="Ubicación"  value="Colombia" />
+      <ContactInfoItem icon="clock"   label="Horario"    value="Lun–Vie 8:00–18:00" />
+    </div>
+  </SectionLayout>
+
+  <!-- ─── 18. GOOGLE MAPS ──────────────────────────────────── -->
+  <SectionLayout class="bg-surface-raised">
+    <Text as="label" class="mb-4 block">18 — Google Maps Embed</Text>
+    <Text as="h2" class="mb-8">Ubicación</Text>
+    <MapEmbed height="350px" class="max-w-2xl" />
+  </SectionLayout>
+
+  <!-- ─── 19. CONTACT FORM ─────────────────────────────────── -->
+  <SectionLayout>
+    <Text as="label" class="mb-4 block">19 — Formulario de contacto</Text>
+    <Text as="h2" class="mb-8">React Hook Form + Zod</Text>
+    <div class="max-w-2xl rounded-2xl border border-surface-border bg-surface-raised p-8">
+      <ContactForm client:visible />
+    </div>
+  </SectionLayout>
+
+  <!-- ─── 20. SUBSCRIBE ────────────────────────────────────── -->
+  <SectionLayout class="bg-surface-raised">
+    <Text as="label" class="mb-4 block">20 — Subscribe Form</Text>
+    <Text as="h2" class="mb-8">Newsletter</Text>
+    <div class="max-w-md">
+      <SubscribeForm client:visible />
+    </div>
+  </SectionLayout>
+
+  <!-- ─── 21. STATS SECTION ────────────────────────────────── -->
+  <StatsSection />
+
+  <!-- ─── 22. TESTIMONIALS ─────────────────────────────────── -->
+  <Testimonials />
+
+  <!-- ─── 23. PORTFOLIO GRID ───────────────────────────────── -->
+  <PortfolioGrid limit={8} />
+
+  <!-- ─── 24. SUBSCRIBE BAR ────────────────────────────────── -->
+  <SubscribeBar />
+
+</PageLayout>

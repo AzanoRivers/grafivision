@@ -1,0 +1,16 @@
+---
+interface Props {
+  variant?: 'default' | 'accent' | 'accent-thick'
+  class?: string
+}
+
+const { variant = 'default', class: className } = Astro.props
+
+const variants: Record<string, string> = {
+  default:       'border-surface-border',
+  accent:        'border-brand-red',
+  'accent-thick': 'border-brand-red border-2',
+}
+---
+
+<hr class:list={['border-t', variants[variant], className]} aria-hidden="true" />

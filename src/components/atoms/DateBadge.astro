@@ -1,0 +1,23 @@
+---
+interface Props {
+  date: string | Date
+  class?: string
+}
+
+const { date, class: className } = Astro.props
+
+const d = typeof date === 'string' ? new Date(date) : date
+const day   = d.getDate().toString().padStart(2, '0')
+const month = d.toLocaleString('es-CO', { month: 'short' }).toUpperCase()
+---
+
+<div
+  class:list={[
+    'inline-flex flex-col items-center justify-center w-12 h-12 rounded-full bg-brand-red text-white leading-none',
+    className,
+  ]}
+  aria-label={d.toLocaleDateString('es-CO')}
+>
+  <span class="text-base font-bold">{day}</span>
+  <span class="text-[9px] font-semibold tracking-wider">{month}</span>
+</div>

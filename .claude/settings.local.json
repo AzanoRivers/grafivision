@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/andro/.claude//**)",
+      "Read(//c/Users/andro/.claude/plugins//**)",
+      "Bash(grep -E \"color:|background|#[0-9a-fA-F]{3,6}\" \"/c/DevCode/Repositories/Grafivision/Plantilla/splashes-creative-agency-template-2023-11-27-05-21-57-utc/Splashes - Creative Agency Template/css/main.css\")",
+      "Bash(grep -E \"#[0-9a-fA-F]{3,6}\")",
+      "Skill(statusline)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(npx skills *)",
+      "Bash(mkdir -p \"C:/DevCode/Repositories/Grafivision/Web/.claude/agents\")",
+      "Bash(mkdir -p \"C:/DevCode/Repositories/Grafivision/Web/.github/instructions\")",
+      "WebFetch(domain:grafivision.com.co)",
+      "Bash(pnpm --version)",
+      "Bash(ASTRO_TELEMETRY_DISABLED=1 pnpm create astro@latest . --template minimal --install --typescript strict --no-git --yes)",
+      "Bash(cp -r extraterrestrial-earth/src .)",
+      "Bash(cp -r extraterrestrial-earth/node_modules .)",
+      "Bash(cp extraterrestrial-earth/package.json .)",
+      "Bash(cp extraterrestrial-earth/pnpm-lock.yaml .)",
+      "Bash(cp extraterrestrial-earth/tsconfig.json .)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(powershell -Command \"Remove-Item -Recurse -Force 'C:\\\\DevCode\\\\Repositories\\\\Grafivision\\\\Web\\\\extraterrestrial-earth'\")",
+      "Bash(pnpm astro *)",
+      "Bash(pnpm remove *)",
+      "Bash(timeout 20 pnpm dev)",
+      "Bash(timeout 25 pnpm dev)",
+      "Bash(pnpm build *)",
+      "Bash(pnpm run *)",
+      "Bash(find \"C:\\\\\\\\DevCode\\\\\\\\Repositories\\\\\\\\Grafivision\\\\\\\\Plantilla\\\\\\\\splashes-creative-agency-template-2023-11-27-05-21-57-utc\\\\\\\\Splashes - Creative Agency Template\" -type f -name \"*.html\" -o -name \"*.js\" -o -name \"*.css\")",
+      "Bash(xargs sed *)",
+      "Bash(pnpm dev *)",
+      "Bash(python .claude/skills/webapp-testing/scripts/with_server.py --help)",
+      "Bash(python test_cursor_glow.py)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({**d.get\\('dependencies',{}\\), **d.get\\('devDependencies',{}\\)}, indent=2\\)\\)\")"
+    ]
+  }
+}

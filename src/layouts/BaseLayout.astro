@@ -1,0 +1,206 @@
+---
+import { ClientRouter } from 'astro:transitions'
+import '../styles/global.css'
+
+interface Props {
+  title: string
+  description?: string
+  ogImage?: string
+  ogImageAlt?: string
+  preloadImage?: string
+  noindex?: boolean
+  noSuffix?: boolean
+  class?: string
+}
+
+const {
+  title,
+  description = 'Empresa especializada en artes gráficas e impresión con más de 33 años de experiencia en Bogotá. Impresión offset, digital, gran formato, material POP y empaques.',
+  ogImage = '/images/brand/GF-1.webp',
+  ogImageAlt = 'GrafiVisión Editores S.A.S. · Artes Gráficas e Impresión',
+  preloadImage,
+  noindex = false,
+  noSuffix = false,
+  class: className,
+} = Astro.props
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString()
+const ogImageURL = new URL(ogImage, Astro.site).toString()
+const pageTitle = noSuffix ? title : (title ? `${title} · GrafiVisión` : 'GrafiVisión')
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'GrafiVisión Editores S.A.S.',
+  url: 'https://grafivision.com.co',
+  logo: 'https://grafivision.com.co/favicon.svg',
+  description: 'Empresa especializada en artes gráficas e impresión con más de 33 años de experiencia en Bogotá. Impresión offset, digital, gran formato, material POP y empaques.',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Carrera 28B No. 71C-14',
+    addressLocality: 'Bogotá',
+    addressCountry: 'CO',
+  },
+  telephone: '+576014377474',
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: '+576014377474',
+    email: 'clientes@grafivision.com.co',
+    contactType: 'customer service',
+    availableLanguage: 'Spanish',
+  },
+  sameAs: [
+    'https://instagram.com/grafivision',
+    'https://behance.net/grafivision',
+    'https://linkedin.com/company/grafivision',
+  ],
+}
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#E8222B" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="GrafiVisión" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    <meta property="og:locale" content="es_CO" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@grafivision" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+
+    <!-- Color scheme (fast background paint) -->
+    <meta name="color-scheme" content="light" />
+
+    <!-- LCP preload hint -->
+    {preloadImage && (
+      <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />
+    )}
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <!-- Fonts: preconnect + non-blocking load -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Pacifico&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Pacifico&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+
+    <ClientRouter />
+  </head>
+  <body class:list={['bg-surface-base text-text-primary font-body antialiased', className]}>
+    <canvas id="cursor-trail" aria-hidden="true"></canvas>
+    <slot />
+
+    <script>
+      // ── Scroll reveal ────────────────────────────────────────────
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add('is-visible')
+              observer.unobserve(e.target)
+            }
+          })
+        },
+        { threshold: 0.12 }
+      )
+      document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
+
+      // Re-run after Astro view transitions
+      document.addEventListener('astro:page-load', () => {
+        document.querySelectorAll('.reveal:not(.is-visible)').forEach((el) => observer.observe(el))
+      })
+
+      // ── Parallax backgrounds ─────────────────────────────────────
+      // Elements with [data-parallax-img] get a translateY offset on scroll.
+      // Image is pre-sized to top:-20%;height:140% so it never clips.
+      function initParallax() {
+        const imgs = Array.from(
+          document.querySelectorAll<HTMLImageElement>('[data-parallax-img]')
+        )
+        if (!imgs.length) return
+
+        let ticking = false
+
+        function updateParallax() {
+          imgs.forEach((img) => {
+            const section = img.closest('section')
+            if (!section) return
+            const rect = section.getBoundingClientRect()
+            // Skip sections fully outside viewport
+            if (rect.bottom < 0 || rect.top > window.innerHeight) return
+            const speed  = parseFloat(img.dataset.parallaxSpeed ?? '0.25')
+            const offset = (rect.top + rect.height / 2 - window.innerHeight / 2) * speed
+            // Clamp: never exceed the extra image area (40% of section height each side)
+            const maxOffset = section.offsetHeight * 0.4
+            const safe = Math.max(-maxOffset, Math.min(maxOffset, offset))
+            img.style.transform = `translateY(${safe}px)`
+          })
+          ticking = false
+        }
+
+        window.addEventListener('scroll', () => {
+          if (!ticking) {
+            requestAnimationFrame(updateParallax)
+            ticking = true
+          }
+        }, { passive: true })
+
+        updateParallax() // paint initial position
+      }
+
+      initParallax()
+      document.addEventListener('astro:page-load', initParallax)
+    </script>
+
+    <script>
+      import { initFluidTrail } from '@/lib/fluid-simulation'
+
+      let cleanup: (() => void) | undefined
+
+      function init() {
+        cleanup?.()
+        cleanup = initFluidTrail()
+      }
+
+      init()
+      document.addEventListener('astro:page-load', init)
+    </script>
+  </body>
+</html>

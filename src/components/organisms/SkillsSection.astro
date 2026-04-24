@@ -1,0 +1,92 @@
+---
+import Reveal from '@/components/transitions/Reveal.astro'
+
+interface SkillItem {
+  label: string
+  value: number
+}
+
+interface Props {
+  skills?: SkillItem[]
+  class?: string
+}
+
+const {
+  skills = [
+    { label: 'Impresión Offset',     value: 98 },
+    { label: 'Impresión Digital',    value: 96 },
+    { label: 'Gran Formato',         value: 95 },
+    { label: 'Empaques y Packaging', value: 93 },
+    { label: 'Material POP',         value: 94 },
+    { label: 'Acabados Especiales',  value: 91 },
+  ],
+  class: className,
+} = Astro.props
+---
+
+<section class:list={['bg-surface-raised', className]}>
+  <div class="container-content section-padding section-gap">
+    <div class="grid grid-cols-1 gap-12 xl:grid-cols-2 xl:gap-20 xl:items-center">
+      <!-- Left: text -->
+      <Reveal>
+        <span class="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
+          Habilidades
+        </span>
+        <h2 class="font-display text-3xl font-bold text-text-primary xl:text-4xl mb-5">
+          Capacidades técnicas de primer nivel
+        </h2>
+        <p class="text-text-secondary leading-relaxed">
+          33 años perfeccionando cada proceso de producción gráfica. Tecnología de punta
+          y operarios especializados garantizan resultados consistentes en cada tiraje.
+        </p>
+      </Reveal>
+
+      <!-- Right: skill bars -->
+      <div class="flex flex-col gap-5" data-skills>
+        {skills.map((skill, i) => (
+          <Reveal delay={Math.min(i + 1, 5) as 1|2|3|4|5}>
+            <div>
+              <div class="mb-1.5 flex items-center justify-between">
+                <span class="text-sm font-medium text-text-primary">{skill.label}</span>
+                <span class="text-sm font-bold text-brand-red">{skill.value}%</span>
+              </div>
+              <div class="h-1.5 overflow-hidden rounded-full bg-surface-muted">
+                <div
+                  class="skill-bar h-full rounded-full bg-brand-red"
+                  data-value={skill.value}
+                  style="width: 0%"
+                  role="progressbar"
+                  aria-valuenow={skill.value}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label={`${skill.label}: ${skill.value}%`}
+                />
+              </div>
+            </div>
+          </Reveal>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const bars = entry.target.querySelectorAll<HTMLElement>('.skill-bar')
+          bars.forEach((bar) => {
+            const value = bar.dataset.value ?? '0'
+            bar.style.transition = 'width 1.2s cubic-bezier(0.4,0,0.2,1)'
+            bar.style.width = `${value}%`
+          })
+          observer.unobserve(entry.target)
+        }
+      })
+    },
+    { threshold: 0.3 }
+  )
+
+  document.querySelectorAll('[data-skills]').forEach((el) => observer.observe(el))
+</script>

@@ -1,0 +1,228 @@
+---
+import Button from '@/components/atoms/Button.astro'
+import Divider from '@/components/atoms/Divider.astro'
+import Img from '@/components/atoms/Img.astro'
+import Reveal from '@/components/transitions/Reveal.astro'
+import PageLayout from '@/layouts/PageLayout.astro'
+import CtaBanner from '@/components/organisms/CtaBanner.astro'
+import { portfolioItems } from '@/lib/data/portfolio'
+
+const { slug } = Astro.params
+const item = portfolioItems.find((p) => p.slug === slug)
+
+if (!item) {
+  return Astro.redirect('/portafolio')
+}
+
+const categoryLabels: Record<string, string> = {
+  offset:         'Offset',
+  digital:        'Digital',
+  'gran-formato': 'Gran Formato',
+  pop:            'Material POP',
+  empaques:       'Empaques',
+}
+
+// Related projects: same category, exclude current, max 4
+const related = portfolioItems
+  .filter((p) => p.category === item.category && p.slug !== item.slug)
+  .slice(0, 4)
+
+// Prev / Next
+const idx  = portfolioItems.findIndex((p) => p.slug === slug)
+const prev = idx > 0 ? portfolioItems[idx - 1] : null
+const next = idx < portfolioItems.length - 1 ? portfolioItems[idx + 1] : null
+---
+
+<PageLayout
+  title={item.title}
+  description={item.description ?? `Proyecto de ${categoryLabels[item.category]} por GrafiVisión.`}
+  ogImage={item.thumbnail}
+  ogImageAlt={`${item.title} · Proyecto de ${categoryLabels[item.category]} por GrafiVisión`}
+  preloadImage={item.thumbnail}
+>
+
+  <!-- ── Project hero ─────────────────────────────────── -->
+  <section class="relative overflow-hidden bg-black">
+    <div class="absolute inset-0" aria-hidden="true">
+      <Img
+        src={item.thumbnail}
+        alt={item.title}
+        width={1440}
+        height={700}
+        class="h-full w-full object-cover opacity-50"
+        loading="eager"
+        fetchpriority="high"
+      />
+      <div class="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent" />
+    </div>
+    <div class="container-content section-padding relative z-10 py-24 xl:py-36">
+      <div class="max-w-2xl">
+        <span class="mb-4 inline-block rounded-full bg-brand-red px-4 py-1.5 text-xs font-semibold text-white">
+          {categoryLabels[item.category]}
+        </span>
+        <h1 class="font-display text-4xl font-bold leading-tight text-white xl:text-6xl">
+          {item.title}
+        </h1>
+        {item.client && (
+          <p class="mt-4 text-white/60 text-sm">Cliente: <span class="text-white/90">{item.client}</span></p>
+        )}
+        <p class="mt-1 text-white/60 text-sm">Año: <span class="text-white/90">{item.year}</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Project detail ────────────────────────────────── -->
+  <section class="bg-surface-base">
+    <div class="container-content section-padding section-gap">
+      <div class="grid grid-cols-1 gap-12 xl:grid-cols-3 xl:gap-16">
+
+        <!-- Description -->
+        <div class="xl:col-span-2">
+          <Reveal>
+            <span class="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
+              Sobre el proyecto
+            </span>
+            <h2 class="font-display text-2xl font-bold text-text-primary xl:text-3xl">
+              {item.title}
+            </h2>
+            <Divider variant="accent" class="my-5 w-10" />
+            <p class="text-text-secondary leading-relaxed">
+              {item.description}
+            </p>
+          </Reveal>
+        </div>
+
+        <!-- Meta sidebar -->
+        <Reveal delay={1} class="flex flex-col gap-6 rounded-2xl border border-surface-border bg-surface-raised p-6 h-fit">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-text-muted">Categoría</p>
+            <p class="mt-1 font-semibold text-text-primary">{categoryLabels[item.category]}</p>
+          </div>
+          {item.client && (
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-text-muted">Cliente</p>
+              <p class="mt-1 font-semibold text-text-primary">{item.client}</p>
+            </div>
+          )}
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-text-muted">Año</p>
+            <p class="mt-1 font-semibold text-text-primary">{item.year}</p>
+          </div>
+          <Button href="/contacto" variant="primary" size="md">
+            Iniciar proyecto similar
+          </Button>
+        </Reveal>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Image gallery ─────────────────────────────────── -->
+  {item.images.length > 1 && (
+    <section class="bg-surface-raised">
+      <div class="container-content section-padding pb-16 pt-0">
+        <div class={`grid gap-4 ${item.images.length === 2 ? 'grid-cols-1 xl:grid-cols-2' : 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'}`}>
+          {item.images.map((src, i) => (
+            <Reveal delay={(i % 3) as 0|1|2}>
+              <div class="overflow-hidden rounded-2xl ring-1 ring-surface-border">
+                <Img
+                  src={src}
+                  alt={`${item.title}, imagen ${i + 1}`}
+                  width={800}
+                  height={600}
+                  class="w-full object-cover transition-transform duration-700 hover:scale-105"
+                />
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ── Prev / Next navigation ────────────────────────── -->
+  <section class="bg-surface-base border-t border-surface-border">
+    <div class="container-content section-padding py-10">
+      <div class="flex items-center justify-between gap-4">
+        {prev ? (
+          <a
+            href={`/portafolio/${prev.slug}`}
+            class="group flex items-center gap-3 rounded-xl border border-surface-border bg-surface-raised px-5 py-4 transition-all duration-200 hover:border-brand-red/40 hover:shadow-sm"
+          >
+            <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-text-muted transition-transform group-hover:-translate-x-1" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 18l-6-6 6-6" />
+            </svg>
+            <div>
+              <p class="text-xs text-text-muted">Anterior</p>
+              <p class="text-sm font-semibold text-text-primary line-clamp-1 max-w-50">{prev.title}</p>
+            </div>
+          </a>
+        ) : <div />}
+
+        <Button href="/portafolio" variant="ghost" size="sm">
+          Ver todo
+        </Button>
+
+        {next ? (
+          <a
+            href={`/portafolio/${next.slug}`}
+            class="group flex items-center gap-3 rounded-xl border border-surface-border bg-surface-raised px-5 py-4 text-right transition-all duration-200 hover:border-brand-red/40 hover:shadow-sm"
+          >
+            <div>
+              <p class="text-xs text-text-muted">Siguiente</p>
+              <p class="text-sm font-semibold text-text-primary line-clamp-1 max-w-50">{next.title}</p>
+            </div>
+            <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-text-muted transition-transform group-hover:translate-x-1" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6" />
+            </svg>
+          </a>
+        ) : <div />}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Related projects ───────────────────────────────── -->
+  {related.length > 0 && (
+    <section class="bg-surface-raised">
+      <div class="container-content section-padding section-gap">
+        <Reveal>
+          <h2 class="font-display text-2xl font-bold text-text-primary xl:text-3xl mb-8">
+            Proyectos relacionados
+          </h2>
+        </Reveal>
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+          {related.map((r, i) => (
+            <Reveal delay={(i % 4) as 0|1|2|3}>
+              <a
+                href={`/portafolio/${r.slug}`}
+                class="group relative block overflow-hidden rounded-2xl ring-1 ring-surface-border"
+                aria-label={`Ver proyecto: ${r.title}`}
+              >
+                <div class="aspect-4/3 overflow-hidden">
+                  <Img
+                    src={r.thumbnail}
+                    alt={r.title}
+                    width={400}
+                    height={300}
+                    class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                </div>
+                <div class="absolute inset-0 flex flex-col justify-end bg-linear-to-t from-black/75 via-black/10 to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  <p class="font-display text-sm font-bold text-white">{r.title}</p>
+                </div>
+                <div class="absolute right-3 top-3">
+                  <span class="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-text-secondary backdrop-blur-sm">
+                    {categoryLabels[r.category]}
+                  </span>
+                </div>
+              </a>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <CtaBanner />
+
+</PageLayout>

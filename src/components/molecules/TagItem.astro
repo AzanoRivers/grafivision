@@ -1,0 +1,25 @@
+---
+interface Props {
+  label: string
+  href?: string
+  count?: number
+  class?: string
+}
+
+const { label, href, count, class: className } = Astro.props
+const Tag = href ? 'a' : 'span'
+---
+
+<Tag
+  href={href}
+  class:list={[
+    'inline-flex items-center gap-1.5 rounded-pill border border-surface-border bg-surface-overlay px-3 py-1 text-xs font-medium text-text-secondary transition-all duration-200',
+    href ? 'hover:border-brand-red/50 hover:text-brand-red cursor-pointer' : '',
+    className,
+  ]}
+>
+  {label}
+  {count !== undefined && (
+    <span class="rounded-full bg-surface-muted px-1.5 py-0.5 text-[10px] text-text-muted">{count}</span>
+  )}
+</Tag>

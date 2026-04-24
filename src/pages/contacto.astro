@@ -1,0 +1,72 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro'
+import PageHero from '@/components/organisms/PageHero.astro'
+import ContactSection from '@/components/organisms/ContactSection.astro'
+import Reveal from '@/components/transitions/Reveal.astro'
+import SubscribeBar from '@/components/organisms/SubscribeBar.astro'
+
+const steps = [
+  {
+    number: '01',
+    title: 'Cuéntanos tu proyecto',
+    desc: 'Completa el formulario con los detalles de lo que necesitas. Entre más contexto mejor.',
+  },
+  {
+    number: '02',
+    title: 'Recibimos y analizamos',
+    desc: 'En menos de 24 horas respondemos con preguntas clave o una propuesta inicial sin costo.',
+  },
+  {
+    number: '03',
+    title: 'Iniciamos la ejecución',
+    desc: 'Una vez alineados en el alcance y la propuesta, arrancamos. Sin trámites innecesarios.',
+  },
+]
+---
+
+<PageLayout
+  title="Contacto"
+  description="Solicita cotización de impresión offset, digital, gran formato o empaques. GrafiVisión Editores S.A.S., Bogotá. Respondemos en menos de 24 horas."
+  preloadImage="/images/brand/GF-4.webp"
+>
+
+  <PageHero
+    badge="Contacto"
+    title="Hablemos de tu proyecto"
+    subtitle="Cuéntanos qué necesitas. Respondemos en 24 horas con una propuesta inicial."
+    image="/images/brand/GF-4.webp"
+  />
+
+  <!-- ── Proceso ─────────────────────────────────────────── -->
+  <section class="bg-surface-raised border-b border-surface-border">
+    <div class="container-content section-padding py-14">
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+        {steps.map((step, i) => (
+          <Reveal delay={(i) as 0|1|2} class="flex items-start gap-5">
+            <!-- Step number -->
+            <div
+              class="shrink-0 font-display text-4xl font-bold leading-none text-brand-red/20"
+              aria-hidden="true"
+            >
+              {step.number}
+            </div>
+            <!-- Divider line between number and content -->
+            <div class="mt-2 shrink-0 h-full">
+              <div class="h-full w-px bg-surface-border" aria-hidden="true" />
+            </div>
+            <div class="pt-1">
+              <h3 class="font-display text-base font-bold text-text-primary">{step.title}</h3>
+              <p class="mt-2 text-sm text-text-secondary leading-relaxed">{step.desc}</p>
+            </div>
+          </Reveal>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Formulario + info ──────────────────────────────── -->
+  <ContactSection />
+
+  <SubscribeBar />
+
+</PageLayout>

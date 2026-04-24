@@ -1,0 +1,163 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro'
+import PageHero from '@/components/organisms/PageHero.astro'
+import StatsSection from '@/components/organisms/StatsSection.astro'
+import CtaBanner from '@/components/organisms/CtaBanner.astro'
+import Reveal from '@/components/transitions/Reveal.astro'
+import Divider from '@/components/atoms/Divider.astro'
+
+const videos = [
+  { src: '/videos/maquina_1_min.mp4',  label: 'Proceso de producción 1' },
+  { src: '/videos/maquina_2_min.mp4',  label: 'Proceso de producción 2' },
+  { src: '/videos/maquina_3_min.mp4',  label: 'Proceso de producción 3' },
+  { src: '/videos/maquina_4_min.mp4',  label: 'Proceso de producción 4' },
+  { src: '/videos/maquina_5_min.mp4',  label: 'Proceso de producción 5' },
+  { src: '/videos/maquina_6_min.mp4',  label: 'Proceso de producción 6' },
+  { src: '/videos/maquina_7_min.mp4',  label: 'Proceso de producción 7' },
+  { src: '/videos/maquina_8_min.mp4',  label: 'Proceso de producción 8' },
+  { src: '/videos/maquina_9_min.mp4',  label: 'Proceso de producción 9' },
+  { src: '/videos/maquina_10_min.mp4', label: 'Proceso de producción 10' },
+  { src: '/videos/maquina_11_min.mp4', label: 'Proceso de producción 11' },
+]
+
+const capacidades = {
+  impresion: ['Offset', 'Digital (Indigo)', 'Gran formato'],
+  materiales: ['Cartulina', 'Propalcote', 'Cartón', 'Vinilo', 'Banner'],
+}
+---
+
+<PageLayout
+  title="Tecnología"
+  description="Equipos de impresión de última generación. Roland EU-1000MF y tecnología Indigo para producción de alta calidad en Bogotá."
+  preloadImage="/images/brand/GF-1.webp"
+>
+  <PageHero
+    badge="Tecnología"
+    title="Equipos de última generación"
+    subtitle="Tecnología de punta que garantiza precisión, velocidad y calidad en cada producción."
+    image="/images/brand/GF-1.webp"
+  />
+
+  <!-- Equipo destacado: Roland EU-1000MF -->
+  <section class="bg-surface-base">
+    <div class="container-content section-padding section-gap">
+      <div class="grid grid-cols-1 gap-12 xl:grid-cols-2 xl:items-center xl:gap-20">
+
+        <Reveal>
+          <span class="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
+            Equipo destacado
+          </span>
+          <h2 class="font-display text-3xl font-bold text-text-primary xl:text-4xl">
+            Roland EU-1000MF
+          </h2>
+          <Divider variant="accent" class="my-6 w-12" />
+          <p class="text-text-secondary leading-relaxed">
+            Impresión plana de gran formato con alta precisión y velocidad sobre materiales
+            de hasta <strong class="text-text-primary">2440 mm × 1220 mm</strong>.
+            Ideal para vinilos, backlites, microperforados y materiales rígidos de gran formato.
+          </p>
+          <ul class="mt-6 space-y-3">
+            {[
+              'Alta precisión de impresión en gran formato',
+              'Compatible con múltiples tipos de materiales',
+              'Velocidad de producción industrial',
+              'Colores consistentes y de alta fidelidad',
+            ].map((item) => (
+              <li class="flex items-start gap-3 text-sm text-text-secondary">
+                <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0 text-brand-red" aria-hidden="true">
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+
+        <!-- Capacidades técnicas -->
+        <Reveal delay={1}>
+          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div class="rounded-2xl border border-surface-border bg-surface-raised p-6">
+              <h3 class="mb-4 font-display text-base font-bold text-text-primary">
+                Tipos de impresión
+              </h3>
+              <ul class="space-y-2">
+                {capacidades.impresion.map((item) => (
+                  <li class="flex items-center gap-2 text-sm text-text-secondary">
+                    <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-red" aria-hidden="true" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div class="rounded-2xl border border-surface-border bg-surface-raised p-6">
+              <h3 class="mb-4 font-display text-base font-bold text-text-primary">
+                Materiales
+              </h3>
+              <ul class="space-y-2">
+                {capacidades.materiales.map((item) => (
+                  <li class="flex items-center gap-2 text-sm text-text-secondary">
+                    <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-red" aria-hidden="true" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </Reveal>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Grid de videos de maquinaria -->
+  <section class="bg-surface-raised">
+    <div class="container-content section-padding section-gap">
+      <Reveal class="mb-12 text-center">
+        <span class="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
+          En acción
+        </span>
+        <h2 class="font-display text-3xl font-bold text-text-primary xl:text-4xl">
+          Nuestra maquinaria
+        </h2>
+        <p class="mx-auto mt-4 max-w-xl text-text-secondary">
+          Equipos de impresión offset, digital e industrial que garantizan resultados
+          precisos y de alta calidad en cada proyecto.
+        </p>
+      </Reveal>
+
+      <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+        {videos.map((v, i) => (
+          <Reveal delay={(i % 4) as 0|1|2|3}>
+            <article class="overflow-hidden rounded-2xl border border-surface-border bg-surface-base">
+              <div class="aspect-video w-full overflow-hidden bg-black">
+                <video
+                  src={v.src}
+                  controls
+                  preload="metadata"
+                  class="h-full w-full object-cover"
+                  aria-label={v.label}
+                >
+                  Tu navegador no soporta reproducción de video.
+                </video>
+              </div>
+              <div class="px-4 py-3">
+                <p class="text-sm font-medium text-text-secondary">{v.label}</p>
+              </div>
+            </article>
+          </Reveal>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <StatsSection />
+
+  <CtaBanner
+    title="¿Tienes un proyecto que requiere alta tecnología?"
+    subtitle="Contamos con los equipos y la experiencia para producir tus piezas con la más alta calidad."
+    primaryLabel="Solicitar cotización"
+    primaryHref="/contacto"
+    secondaryLabel="Ver portafolio"
+    secondaryHref="/portafolio"
+  />
+</PageLayout>

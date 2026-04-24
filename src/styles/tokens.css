@@ -1,0 +1,111 @@
+@theme {
+  /* ─── Breakpoints ──────────────────────────────────── */
+  --breakpoint-sm:  270px;
+  --breakpoint-md:  360px;
+  --breakpoint-lg:  440px;
+  --breakpoint-xl:  750px;
+  --breakpoint-2xl: 1200px;
+
+  /* ─── Brand Colors ─────────────────────────────────── */
+  --color-brand-red:        #E8222B;
+  --color-brand-red-dark:   #B91C22;
+  --color-brand-red-light:  #FF4D54;
+  --color-brand-orange:     #FF6B2C;
+  --color-brand-pink:       #FF2D6B;
+
+  /* ─── Surfaces (Light Theme) ──────────────────────── */
+  --color-surface-base:     #F8F8F8;
+  --color-surface-raised:   #FFFFFF;
+  --color-surface-overlay:  #F3F3F3;
+  --color-surface-border:   #E4E4E4;
+  --color-surface-muted:    #D4D4D4;
+
+  /* ─── Explicit Dark (use for image overlays only) ── */
+  --color-dark-base:        #0B0B0B;
+  --color-dark-raised:      #161616;
+  --color-dark-overlay:     #222222;
+  --color-dark-border:      #2E2E2E;
+  --color-dark-muted:       #3D3D3D;
+
+  /* ─── Light aliases (kept for backwards compat) ─── */
+  --color-light-base:       #F8F8F8;
+  --color-light-raised:     #FFFFFF;
+  --color-light-border:     #E4E4E4;
+
+  /* ─── Text (Light Theme) ────────────────────────── */
+  --color-text-primary:     #111111;
+  --color-text-secondary:   #525252;
+  --color-text-muted:       #737373;
+  --color-text-inverse:     #FFFFFF;
+
+  /* ─── UI State ─────────────────────────────────────── */
+  --color-state-success:    #22C55E;
+  --color-state-warning:    #F59E0B;
+  --color-state-error:      #EF4444;
+  --color-state-info:       #3B82F6;
+
+  /* ─── Typography ───────────────────────────────────── */
+  --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+  --font-hero:    'Pacifico', cursive;
+
+  /* ─── Font Sizes ───────────────────────────────────── */
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+  --text-3xl:  1.875rem;
+  --text-4xl:  2.25rem;
+  --text-5xl:  3rem;
+  --text-6xl:  3.75rem;
+  --text-7xl:  4.5rem;
+
+  /* ─── Spacing ──────────────────────────────────────── */
+  --spacing-section-sm: 3rem;
+  --spacing-section:    5rem;
+  --spacing-section-lg: 8rem;
+
+  /* ─── Border Radius ────────────────────────────────── */
+  --radius-sm:   0.25rem;
+  --radius-md:   0.5rem;
+  --radius-lg:   0.75rem;
+  --radius-xl:   1rem;
+  --radius-2xl:  1.5rem;
+  --radius-pill: 9999px;
+
+  /* ─── Shadows ──────────────────────────────────────── */
+  --shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.07);
+  --shadow-md:  0 4px 12px rgba(0, 0, 0, 0.09);
+  --shadow-lg:  0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-red: 0 4px 24px rgba(232, 34, 43, 0.25);
+
+  /* ─── Transitions & Easing ─────────────────────────── */
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in:     cubic-bezier(0.4, 0, 1, 1);
+  --ease-out:    cubic-bezier(0, 0, 0.2, 1);
+
+  /* ─── Z-Index Scale ────────────────────────────────── */
+  --z-base:    0;
+  --z-raised:  10;
+  --z-overlay: 20;
+  --z-modal:   30;
+  --z-toast:   40;
+  --z-nav:     50;
+}
+
+/* ─── Custom Utilities ─────────────────────────────────── */
+
+@utility section-padding {
+  @apply px-4 md:px-6 xl:px-12 2xl:px-20;
+}
+
+@utility container-content {
+  @apply mx-auto w-full max-w-screen-2xl;
+}
+
+@utility section-gap {
+  @apply py-(--spacing-section-sm) xl:py-(--spacing-section);
+}

@@ -1,0 +1,30 @@
+---
+type TextAs = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'label' | 'figcaption'
+
+interface Props {
+  as?: TextAs
+  class?: string
+}
+
+const { as: tagName = 'p', class: className } = Astro.props
+const Tag = tagName as TextAs
+
+const presets: Record<TextAs, string> = {
+  h1: 'font-display text-5xl xl:text-7xl font-bold leading-tight tracking-tight text-text-primary',
+  h2: 'font-display text-3xl xl:text-5xl font-bold leading-tight tracking-tight text-text-primary',
+  h3: 'font-display text-2xl xl:text-3xl font-bold leading-snug text-text-primary',
+  h4: 'font-display text-xl xl:text-2xl font-semibold text-text-primary',
+  h5: 'font-display text-lg xl:text-xl font-semibold text-text-primary',
+  h6: 'font-display text-base xl:text-lg font-semibold text-text-primary',
+  p: 'text-base text-text-secondary leading-relaxed',
+  span: 'text-base text-text-primary',
+  label: 'text-sm font-medium text-text-secondary uppercase tracking-wider',
+  figcaption: 'text-sm text-text-muted text-center mt-2',
+}
+
+const classList = [presets[Tag], className].filter(Boolean).join(' ')
+---
+
+<Tag class={classList}>
+  <slot />
+</Tag>

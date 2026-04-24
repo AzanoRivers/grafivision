@@ -1,0 +1,46 @@
+---
+interface Props {
+  variant?: 'success' | 'error' | 'warning' | 'info'
+  dismissible?: boolean
+  class?: string
+}
+
+const { variant = 'info', dismissible = false, class: className } = Astro.props
+
+const styles: Record<string, { border: string; bg: string; text: string; icon: string }> = {
+  success: { border: 'border-state-success', bg: 'bg-state-success/10', text: 'text-state-success', icon: '✓' },
+  error:   { border: 'border-state-error',   bg: 'bg-state-error/10',   text: 'text-state-error',   icon: '✕' },
+  warning: { border: 'border-state-warning', bg: 'bg-state-warning/10', text: 'text-state-warning', icon: '!' },
+  info:    { border: 'border-state-info',    bg: 'bg-state-info/10',    text: 'text-state-info',    icon: 'i' },
+}
+
+const s = styles[variant]
+---
+
+<div
+  role="alert"
+  data-alert
+  class:list={[
+    'flex items-start gap-3 rounded-lg border-l-4 p-4',
+    s.border, s.bg, className,
+  ]}
+>
+  <span class:list={['flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white', s.text.replace('text-', 'bg-')]}>
+    {s.icon}
+  </span>
+  <div class="flex-1 text-sm text-text-primary">
+    <slot />
+  </div>
+  {dismissible && (
+    <button
+      type="button"
+      onclick="this.closest('[data-alert]').remove()"
+      aria-label="Cerrar alerta"
+      class="shrink-0 text-text-muted hover:text-text-primary transition-colors"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  )}
+</div>

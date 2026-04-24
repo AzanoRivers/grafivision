@@ -1,0 +1,99 @@
+---
+import { getCollection } from 'astro:content'
+import Button from '@/components/atoms/Button.astro'
+import Divider from '@/components/atoms/Divider.astro'
+import Img from '@/components/atoms/Img.astro'
+import Reveal from '@/components/transitions/Reveal.astro'
+
+const allPosts = await getCollection('blog')
+const posts = allPosts
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 3)
+
+const categoryLabels: Record<string, string> = {
+  diseno:      'Diseño',
+  branding:    'Branding',
+  tendencias:  'Tendencias',
+  tips:        'Tips',
+}
+
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+---
+
+<section class="bg-surface-base">
+  <div class="container-content section-padding section-gap">
+
+    <Reveal class="mb-12 text-center">
+      <span class="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
+        Blog
+      </span>
+      <h2 class="font-display text-3xl font-bold text-text-primary xl:text-4xl">
+        Ideas y recursos de diseño
+      </h2>
+      <Divider variant="accent" class="mx-auto my-6 w-12" />
+      <p class="mx-auto max-w-lg text-text-secondary leading-relaxed">
+        Artículos sobre diseño gráfico, branding y comunicación visual
+        para empresas colombianas.
+      </p>
+    </Reveal>
+
+    <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
+      {posts.map((post, i) => (
+        <Reveal delay={(i % 3) as 0|1|2}>
+          <article class="group flex h-full flex-col overflow-hidden rounded-2xl border border-surface-border bg-surface-raised transition-shadow duration-300 hover:shadow-md">
+
+            <!-- Thumbnail -->
+            <a href={`/blog/${post.id}`} class="block overflow-hidden aspect-video shrink-0" aria-hidden="true" tabindex="-1">
+              <Img
+                src={post.data.thumbnail}
+                alt={post.data.title}
+                width={640}
+                height={360}
+                class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+            </a>
+
+            <!-- Content -->
+            <div class="flex flex-1 flex-col p-5">
+              <div class="mb-3 flex items-center gap-2">
+                <span class="rounded-full bg-brand-red/10 px-2.5 py-0.5 text-xs font-semibold text-brand-red">
+                  {categoryLabels[post.data.category]}
+                </span>
+                <span class="text-xs text-text-muted">{formatDate(post.data.pubDate)}</span>
+              </div>
+
+              <a href={`/blog/${post.id}`} class="group/link flex-1">
+                <h3 class="font-display text-base font-bold leading-snug text-text-primary transition-colors group-hover/link:text-brand-red">
+                  {post.data.title}
+                </h3>
+                <p class="mt-2 text-sm text-text-secondary leading-relaxed line-clamp-3">
+                  {post.data.description}
+                </p>
+              </a>
+
+              <a
+                href={`/blog/${post.id}`}
+                class="mt-4 flex items-center gap-1.5 text-xs font-semibold text-brand-red transition-gap hover:gap-2.5"
+              >
+                Leer artículo
+                <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </a>
+            </div>
+
+          </article>
+        </Reveal>
+      ))}
+    </div>
+
+    <Reveal class="mt-10 text-center">
+      <Button href="/blog" variant="outline">
+        Ver todos los artículos
+      </Button>
+    </Reveal>
+
+  </div>
+</section>

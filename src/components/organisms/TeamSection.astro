@@ -1,0 +1,62 @@
+---
+import TeamMemberCard from '@/components/molecules/TeamMemberCard.astro'
+import Button from '@/components/atoms/Button.astro'
+import Divider from '@/components/atoms/Divider.astro'
+import Reveal from '@/components/transitions/Reveal.astro'
+import { teamMembers } from '@/lib/data/team'
+
+interface Props {
+  title?: string
+  subtitle?: string
+  showCta?: boolean
+  class?: string
+}
+
+const {
+  title = 'El equipo detrás de cada proyecto',
+  subtitle = 'Profesionales apasionados por el diseño y comprometidos con los resultados de cada cliente.',
+  showCta = true,
+  class: className,
+} = Astro.props
+---
+
+<section class:list={['bg-surface-base', className]}>
+  <div class="container-content section-padding section-gap">
+
+    <!-- Header -->
+    <Reveal class="text-center">
+      <span class="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
+        Nuestro equipo
+      </span>
+      <h2 class="font-display text-3xl font-bold text-text-primary xl:text-4xl">
+        {title}
+      </h2>
+      <Divider variant="accent" class="mx-auto my-6 w-12" />
+      <p class="mx-auto max-w-xl text-text-secondary leading-relaxed">
+        {subtitle}
+      </p>
+    </Reveal>
+
+    <!-- Team grid -->
+    <div class="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
+      {teamMembers.map((member, i) => (
+        <Reveal delay={i as 0 | 1 | 2 | 3}>
+          <TeamMemberCard {...member} />
+        </Reveal>
+      ))}
+    </div>
+
+    <!-- CTA -->
+    {showCta && (
+      <Reveal class="mt-12 text-center" delay={3}>
+        <Button href="/equipo" variant="outline" size="md">
+          Conocer al equipo completo
+          <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6" />
+          </svg>
+        </Button>
+      </Reveal>
+    )}
+
+  </div>
+</section>

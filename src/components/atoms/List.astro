@@ -1,0 +1,51 @@
+---
+interface Props {
+  variant?: 'splash' | 'round' | 'angle'
+  class?: string
+}
+
+const { variant = 'round', class: className } = Astro.props
+---
+
+<ul class:list={['space-y-2.5', className]} data-list-variant={variant}>
+  <slot />
+</ul>
+
+<style>
+  [data-list-variant] :global(li) {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  [data-list-variant] :global(li::before) {
+    content: '';
+    flex-shrink: 0;
+    margin-top: 0.35em;
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: var(--color-brand-red);
+  }
+
+  [data-list-variant='round'] :global(li::before) {
+    border-radius: 9999px;
+  }
+
+  [data-list-variant='angle'] :global(li::before) {
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+    background-color: var(--color-brand-red);
+    width: 0.45rem;
+    height: 0.75rem;
+    margin-top: 0.3em;
+  }
+
+  [data-list-variant='splash'] :global(li::before) {
+    width: 0.6rem;
+    height: 0.6rem;
+    background-color: var(--color-brand-red);
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
+</style>

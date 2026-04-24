@@ -1,0 +1,53 @@
+---
+/**
+ * HomeLayout — layout exclusivo del home.
+ *
+ * Orden DOM:
+ *   1. <slot name="hero">  →  HeroSlider (100dvh, sin header encima)
+ *   2. <header sticky>     →  Aparece debajo del hero en flujo normal;
+ *                             al llegar al top de la pantalla se pega
+ *                             gracias a `position: sticky; top: 0`
+ *   3. <main>              →  Resto de secciones de la página
+ *   4. <footer>
+ *
+ * Las páginas interiores siguen usando PageLayout (header arriba fijo).
+ */
+import BaseLayout from './BaseLayout.astro'
+import Header from '@/components/organisms/Header.astro'
+import Footer from '@/components/organisms/Footer.astro'
+
+interface Props {
+  title: string
+  description?: string
+  ogImage?: string
+  ogImageAlt?: string
+  preloadImage?: string
+  noindex?: boolean
+  noSuffix?: boolean
+}
+
+const { title, description, ogImage, ogImageAlt, preloadImage, noindex, noSuffix } = Astro.props
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={ogImage}
+  ogImageAlt={ogImageAlt}
+  preloadImage={preloadImage}
+  noindex={noindex}
+  noSuffix={noSuffix}
+>
+  <!-- Hero: ocupa 100dvh, el header NO está encima -->
+  <slot name="hero" />
+
+  <!-- Header: posición normal en el flujo → sticky al llegar al top -->
+  <Header />
+
+  <!-- Contenido principal -->
+  <main id="main-content" class="relative z-0">
+    <slot />
+  </main>
+
+  <Footer />
+</BaseLayout>

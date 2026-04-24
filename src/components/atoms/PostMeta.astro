@@ -1,0 +1,37 @@
+---
+interface Props {
+  date?: string
+  author?: string
+  category?: string
+  readTime?: string
+  class?: string
+}
+
+const { date, author, category, readTime, class: className } = Astro.props
+
+const formattedDate = date
+  ? new Date(date).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })
+  : undefined
+---
+
+<div class:list={['flex flex-wrap items-center gap-3 text-xs text-text-muted', className]}>
+  {category && (
+    <span class="font-semibold uppercase tracking-wider text-brand-red">{category}</span>
+  )}
+  {category && (date || author) && <span aria-hidden="true">·</span>}
+  {formattedDate && (
+    <time datetime={date}>{formattedDate}</time>
+  )}
+  {author && (
+    <>
+      <span aria-hidden="true">·</span>
+      <span>{author}</span>
+    </>
+  )}
+  {readTime && (
+    <>
+      <span aria-hidden="true">·</span>
+      <span>{readTime}</span>
+    </>
+  )}
+</div>

@@ -1,0 +1,56 @@
+---
+import Badge from '@/components/atoms/Badge.astro'
+import Img from '@/components/atoms/Img.astro'
+
+interface Props {
+  title: string
+  category: string
+  image: string
+  href?: string
+  class?: string
+}
+
+const { title, category, image, href = '#', class: className } = Astro.props
+
+const categoryLabels: Record<string, string> = {
+  offset:         'Offset',
+  digital:        'Digital',
+  'gran-formato': 'Gran Formato',
+  pop:            'Material POP',
+  empaques:       'Empaques',
+}
+---
+
+<a
+  href={href}
+  class:list={['group relative block overflow-hidden rounded-xl bg-surface-raised', className]}
+  aria-label={`Ver proyecto: ${title}`}
+>
+  <!-- Image -->
+  <div class="aspect-4/3 overflow-hidden">
+    <Img
+      src={image}
+      alt={title}
+      width={600}
+      height={450}
+      class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+    />
+  </div>
+
+  <!-- Overlay -->
+  <div class="absolute inset-0 flex flex-col justify-end bg-linear-to-t from-black/80 via-black/20 to-transparent p-5 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+    <Badge variant="red" class="mb-2 w-fit">{categoryLabels[category] ?? category}</Badge>
+    <h3 class="font-display text-base font-bold text-white">{title}</h3>
+    <span class="mt-2 inline-flex items-center gap-1 text-xs font-medium text-white/70">
+      Ver proyecto
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6" />
+      </svg>
+    </span>
+  </div>
+
+  <!-- Always-visible category badge -->
+  <div class="absolute top-3 right-3">
+    <Badge variant="muted" class="backdrop-blur-sm">{categoryLabels[category] ?? category}</Badge>
+  </div>
+</a>

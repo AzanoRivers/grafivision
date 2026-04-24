@@ -1,0 +1,25 @@
+---
+import Reveal from '@/components/transitions/Reveal.astro'
+import Divider from '@/components/atoms/Divider.astro'
+import { ProductGallery } from '@/components/islands/ProductGallery'
+import { productCategories } from '@/lib/data/products'
+---
+
+<section class="bg-surface-base overflow-hidden">
+  <div class="container-content section-padding pb-6">
+    <Reveal>
+      <span class="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
+        Nuestros productos
+      </span>
+      <h2 class="font-display text-3xl font-bold text-text-primary xl:text-4xl">
+        Más de 350 proyectos realizados
+      </h2>
+      <Divider variant="accent" class="my-5 w-10" />
+      <p class="max-w-xl text-text-secondary leading-relaxed">
+        Impresión offset, digital, gran formato, material POP y empaques.
+      </p>
+    </Reveal>
+  </div>
+
+  <ProductGallery client:visible categories={productCategories} />
+</section>

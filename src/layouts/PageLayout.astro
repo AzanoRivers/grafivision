@@ -1,0 +1,26 @@
+---
+import BaseLayout from './BaseLayout.astro'
+import Header from '@/components/organisms/Header.astro'
+import Footer from '@/components/organisms/Footer.astro'
+
+interface Props {
+  title: string
+  description?: string
+  ogImage?: string
+  ogImageAlt?: string
+  preloadImage?: string
+  noindex?: boolean
+  noSuffix?: boolean
+  class?: string
+}
+
+const { title, description, ogImage, ogImageAlt, preloadImage, noindex, noSuffix, class: className } = Astro.props
+---
+
+<BaseLayout title={title} description={description} ogImage={ogImage} ogImageAlt={ogImageAlt} preloadImage={preloadImage} noindex={noindex} noSuffix={noSuffix}>
+  <Header />
+  <main id="main-content" class:list={['relative z-0', className]}>
+    <slot />
+  </main>
+  <Footer />
+</BaseLayout>

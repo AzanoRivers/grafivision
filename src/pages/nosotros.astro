@@ -1,0 +1,49 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro'
+import PageHero from '@/components/organisms/PageHero.astro'
+import AboutStory from '@/components/organisms/AboutStory.astro'
+import ValuesSection from '@/components/organisms/ValuesSection.astro'
+import SkillsSection from '@/components/organisms/SkillsSection.astro'
+import StatsSection from '@/components/organisms/StatsSection.astro'
+import TeamSection from '@/components/organisms/TeamSection.astro'
+import CtaBanner from '@/components/organisms/CtaBanner.astro'
+import SubscribeBar from '@/components/organisms/SubscribeBar.astro'
+---
+
+<PageLayout
+  title="Nosotros"
+  description="Conoce la historia y los valores de GrafiVisión Editores S.A.S., empresa colombiana con más de 33 años de trayectoria en impresión y producción gráfica en Bogotá."
+  preloadImage="/images/brand/GF-5.webp"
+>
+  <PageHero
+    badge="Sobre nosotros"
+    title="33 años de calidad en cada impresión"
+    subtitle="Desde 1992 produciendo material gráfico de alta calidad para empresas colombianas y marcas internacionales."
+    image="/images/brand/GF-5.webp"
+  />
+
+  <AboutStory />
+
+  <ValuesSection />
+
+  <SkillsSection />
+
+  <StatsSection />
+
+  <TeamSection
+    showCta={false}
+    title="Las personas detrás del estudio"
+    subtitle="Un equipo compacto, especializado y comprometido con la excelencia en cada entrega."
+  />
+
+  <CtaBanner
+    title="¿Tienes un proyecto en mente?"
+    subtitle="Cuéntanos qué necesitas. Respondemos en 24 horas con una propuesta inicial sin costo."
+    primaryLabel="Iniciar proyecto"
+    primaryHref="/contacto"
+    secondaryLabel="Ver portafolio"
+    secondaryHref="/portafolio"
+  />
+
+  <SubscribeBar />
+</PageLayout>

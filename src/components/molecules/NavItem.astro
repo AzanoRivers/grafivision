@@ -1,0 +1,26 @@
+---
+interface Props {
+  label: string
+  href: string
+  class?: string
+}
+
+const { label, href, class: className } = Astro.props
+
+const currentPath = Astro.url.pathname
+const isActive = currentPath === href || (href !== '/' && currentPath.startsWith(href))
+---
+
+<a
+  href={href}
+  class:list={[
+    'text-sm font-medium leading-none transition-colors duration-200',
+    isActive
+      ? 'text-brand-red'
+      : 'text-text-secondary hover:text-brand-red',
+    className,
+  ]}
+  aria-current={isActive ? 'page' : undefined}
+>
+  {label}
+</a>

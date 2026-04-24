@@ -1,0 +1,34 @@
+---
+import HomeLayout from '@/layouts/HomeLayout.astro'
+import Hero from '@/components/organisms/Hero.astro'
+import AboutPreview from '@/components/organisms/AboutPreview.astro'
+import ServicesGrid from '@/components/organisms/ServicesGrid.astro'
+import StatsSection from '@/components/organisms/StatsSection.astro'
+import ProductsSection from '@/components/organisms/ProductsSection.astro'
+import Testimonials from '@/components/organisms/Testimonials.astro'
+import TeamSection from '@/components/organisms/TeamSection.astro'
+import BlogPreview from '@/components/organisms/BlogPreview.astro'
+import CtaBanner from '@/components/organisms/CtaBanner.astro'
+import SubscribeBar from '@/components/organisms/SubscribeBar.astro'
+---
+
+<HomeLayout
+  title="GrafiVisión · Editores"
+  noSuffix
+  preloadImage="/images/brand/GF-1.webp"
+  description="GrafiVisión Editores S.A.S. — 33 años de experiencia en impresión offset, digital, gran formato, empaques y material POP en Bogotá, Colombia."
+>
+  <!-- slot "hero": va ANTES del header en el DOM -->
+  <Hero slot="hero" />
+
+  <!-- slot default: va dentro de <main> DESPUÉS del header sticky -->
+  <AboutPreview />
+  <ServicesGrid />
+  <StatsSection />
+  <ProductsSection />
+  <Testimonials />
+  <TeamSection />
+  <BlogPreview />
+  <CtaBanner />
+  <SubscribeBar />
+</HomeLayout>

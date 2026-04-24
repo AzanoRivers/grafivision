@@ -1,0 +1,92 @@
+---
+import Divider from '@/components/atoms/Divider.astro'
+import Img from '@/components/atoms/Img.astro'
+import Reveal from '@/components/transitions/Reveal.astro'
+import gf1 from '@/assets/images/brand/GF-1.webp'
+import gf2 from '@/assets/images/brand/GF-2.webp'
+import gf4 from '@/assets/images/brand/GF-4.webp'
+
+interface Props {
+  class?: string
+}
+
+const { class: className } = Astro.props
+
+const milestones = [
+  { year: '1992', label: 'Fundación en Bogotá como empresa de artes gráficas e impresión' },
+  { year: '2000', label: 'Incorporación de tecnología de impresión digital de alta calidad' },
+  { year: '2010', label: 'Ampliación a impresión gran formato y material POP' },
+  { year: '2024', label: 'Auditoría SMETA y proceso de certificación ISO 9001 y FSC' },
+]
+---
+
+<section class:list={['bg-surface-base', className]}>
+  <div class="container-content section-padding section-gap">
+
+    <!-- Top: narrative -->
+    <div class="grid grid-cols-1 gap-12 xl:grid-cols-2 xl:items-start xl:gap-20">
+
+      <!-- Left: text + timeline -->
+      <div>
+        <Reveal>
+          <span class="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
+            Nuestra historia
+          </span>
+          <h2 class="font-display text-3xl font-bold leading-tight text-text-primary xl:text-4xl">
+            Más de 33 años en artes gráficas e impresión
+          </h2>
+          <Divider variant="accent" class="my-6 w-12" />
+        </Reveal>
+
+        <Reveal delay={1}>
+          <p class="text-text-secondary leading-relaxed">
+            Somos una empresa especializada en artes gráficas con más de 33 años de experiencia
+            en Bogotá. Contamos con litografía e impresión digital en pequeño y gran formato,
+            brindando soluciones integrales para el desarrollo y producción de piezas publicitarias.
+          </p>
+          <p class="mt-4 text-text-secondary leading-relaxed">
+            Apoyamos a nuestros clientes en el diseño, desarrollo y producción de sus proyectos
+            gráficos, ofreciendo calidad, innovación y cumplimiento. Acompañamos cada etapa del
+            proceso para garantizar que el resultado final fortalezca la imagen de su marca.
+          </p>
+          <p class="mt-4 text-text-secondary leading-relaxed">
+            Nuestro compromiso con la sostenibilidad y la ética nos ha llevado a certificaciones
+            como SMETA y los procesos de certificación ISO 9001 y FSC, garantizando prácticas
+            responsables en cada proceso productivo.
+          </p>
+        </Reveal>
+
+        <!-- Timeline -->
+        <Reveal delay={2} class="mt-10">
+          <ol class="relative border-l border-surface-border pl-6 flex flex-col gap-6">
+            {milestones.map((m) => (
+              <li class="relative">
+                <div class="absolute -left-6.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-brand-red bg-surface-base">
+                  <div class="h-2 w-2 rounded-full bg-brand-red" />
+                </div>
+                <p class="text-xs font-bold text-brand-red tracking-wide">{m.year}</p>
+                <p class="mt-0.5 text-sm text-text-secondary leading-relaxed">{m.label}</p>
+              </li>
+            ))}
+          </ol>
+        </Reveal>
+      </div>
+
+      <!-- Right: images -->
+      <Reveal delay={1} class="flex flex-col gap-5 pt-2">
+        <div class="overflow-hidden rounded-2xl aspect-video">
+          <Img src={gf1} alt="Estudio GrafiVisión" width={720} height={405} class="h-full w-full object-cover" />
+        </div>
+        <div class="grid grid-cols-2 gap-5">
+          <div class="overflow-hidden rounded-2xl aspect-square">
+            <Img src={gf2} alt="Proceso de diseño GrafiVisión" width={340} height={340} class="h-full w-full object-cover" />
+          </div>
+          <div class="overflow-hidden rounded-2xl aspect-square">
+            <Img src={gf4} alt="Trabajo en equipo GrafiVisión" width={340} height={340} class="h-full w-full object-cover" />
+          </div>
+        </div>
+      </Reveal>
+
+    </div>
+  </div>
+</section>

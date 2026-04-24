@@ -1,0 +1,54 @@
+---
+interface Props {
+  variant?: 'full' | 'mark'
+  size?: 'sm' | 'md' | 'lg'
+  class?: string
+}
+
+const { variant = 'full', size = 'md', class: className } = Astro.props
+
+const markSizes: Record<string, number> = {
+  sm: 28,
+  md: 36,
+  lg: 48,
+}
+
+const textSizes: Record<string, string> = {
+  sm: 'text-lg',
+  md: 'text-xl',
+  lg: 'text-2xl',
+}
+
+const markSize = markSizes[size]
+const textSize = textSizes[size]
+---
+
+<a
+  href="/"
+  class:list={['inline-flex items-center gap-3 text-text-primary hover:text-brand-red transition-colors duration-200', className]}
+  aria-label="GrafiVisión, ir al inicio"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 50 50"
+    width={markSize}
+    height={markSize}
+    fill="currentColor"
+    aria-hidden="true"
+    class="shrink-0 text-brand-red"
+  >
+    <path d="M38.2,4c-1.4-1.1-38.3,8-19.9,44.6C-16.4,35.8,5.5-12.8,38.2,4" />
+    <path
+      d="M24.8,17.9c-12.5,10.2-5.7,31-5.4,31.5c1.1,0.3,2,0.6,3.7,0.6c2.3-23,20.4-31.8,20.4-31.8S34.7,17.9,24.8,17.9"
+    />
+    <path d="M49.2,23.6c1.1,14.5-11.4,26.1-24.7,26.1C24.5,49.7,31.3,29,49.2,23.6" />
+  </svg>
+
+  {
+    variant === 'full' && (
+      <span class:list={['font-display font-bold tracking-tight text-inherit', textSize]}>
+        GrafiVisión
+      </span>
+    )
+  }
+</a>

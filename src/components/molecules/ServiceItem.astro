@@ -1,0 +1,41 @@
+---
+interface Props {
+  title: string
+  description: string
+  icon?: string
+  index?: number
+  class?: string
+}
+
+const { title, description, icon = 'Sparkles', class: className } = Astro.props
+
+// Static icon map — add icons here as needed
+import { Palette, Package, Megaphone, BookOpen, Sparkles, Layers, PenTool, Camera } from '@lucide/astro'
+
+const iconMap: Record<string, any> = {
+  Palette, Package, Megaphone, BookOpen, Sparkles, Layers, PenTool, Camera,
+}
+
+const IconComponent = iconMap[icon] ?? Sparkles
+---
+
+<article
+  class:list={[
+    'group flex flex-col gap-5 rounded-2xl border border-surface-border bg-surface-raised p-6 transition-all duration-300 hover:border-brand-red/40 hover:-translate-y-1',
+    className,
+  ]}
+>
+  <!-- Icon -->
+  <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-red/10 text-brand-red transition-colors duration-300 group-hover:bg-brand-red group-hover:text-white">
+    <IconComponent size={22} aria-hidden="true" />
+  </div>
+
+  <!-- Accent line -->
+  <div class="h-px w-8 bg-brand-red/40 transition-all duration-300 group-hover:w-full group-hover:bg-brand-red/60" aria-hidden="true" />
+
+  <!-- Content -->
+  <div class="flex flex-col gap-2">
+    <h3 class="font-display text-lg font-semibold text-text-primary">{title}</h3>
+    <p class="text-sm text-text-secondary leading-relaxed">{description}</p>
+  </div>
+</article>

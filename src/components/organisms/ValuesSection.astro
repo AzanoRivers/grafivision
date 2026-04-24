@@ -1,0 +1,102 @@
+---
+import Divider from '@/components/atoms/Divider.astro'
+import Reveal from '@/components/transitions/Reveal.astro'
+
+interface ValueItem {
+  icon: string
+  title: string
+  description: string
+}
+
+interface Props {
+  class?: string
+}
+
+const { class: className } = Astro.props
+
+const values: ValueItem[] = [
+  {
+    icon: 'creativity',
+    title: 'Creatividad estratégica',
+    description: 'No diseñamos por estética aislada. Cada decisión visual parte de entender el mercado, el público y los objetivos del negocio.',
+  },
+  {
+    icon: 'precision',
+    title: 'Precisión técnica',
+    description: 'Tipografía, color, retícula y acabados con estándares de impresión internacional. Lo que diseñamos también funciona en producción.',
+  },
+  {
+    icon: 'commitment',
+    title: 'Compromiso total',
+    description: 'No entregamos borradores. Cada pieza pasa por iteración interna antes de llegar al cliente. Su tiempo es tan valioso como su marca.',
+  },
+  {
+    icon: 'results',
+    title: 'Orientación a resultados',
+    description: 'El diseño es un medio, no un fin. Medimos el éxito por el impacto que genera: posicionamiento, reconocimiento y ventas reales.',
+  },
+]
+
+// Inline SVG paths per value (no icon library dependency)
+const iconPaths: Record<string, string> = {
+  creativity: 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z',
+  precision: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
+  commitment: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z',
+  results: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6',
+}
+---
+
+<section class:list={['bg-surface-raised', className]}>
+  <div class="container-content section-padding section-gap">
+
+    <!-- Header -->
+    <Reveal class="text-center">
+      <span class="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
+        Nuestros valores
+      </span>
+      <h2 class="font-display text-3xl font-bold text-text-primary xl:text-4xl">
+        Lo que nos define
+      </h2>
+      <Divider variant="accent" class="mx-auto my-6 w-12" />
+      <p class="mx-auto max-w-xl text-text-secondary leading-relaxed">
+        Principios que guían cada proyecto, cada decisión y cada entrega.
+      </p>
+    </Reveal>
+
+    <!-- Values grid -->
+    <div class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+      {values.map((v, i) => (
+        <Reveal delay={Math.min(i, 3) as 0|1|2|3}>
+          <article class="group flex flex-col gap-5 rounded-2xl border border-surface-border bg-surface-overlay p-6 transition-colors duration-300 hover:border-brand-red/40">
+
+            <!-- Icon -->
+            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-red/10 transition-colors duration-300 group-hover:bg-brand-red">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="text-brand-red transition-colors duration-300 group-hover:text-white"
+                aria-hidden="true"
+              >
+                <path d={iconPaths[v.icon]} />
+              </svg>
+            </div>
+
+            <!-- Text -->
+            <div>
+              <h3 class="font-display text-base font-bold text-text-primary">{v.title}</h3>
+              <p class="mt-2 text-sm text-text-secondary leading-relaxed">{v.description}</p>
+            </div>
+
+          </article>
+        </Reveal>
+      ))}
+    </div>
+
+  </div>
+</section>

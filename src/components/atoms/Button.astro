@@ -1,0 +1,62 @@
+---
+interface Props {
+  variant?: 'primary' | 'outline' | 'ghost' | 'dark' | 'pill'
+  size?: 'sm' | 'md' | 'lg'
+  href?: string
+  type?: 'button' | 'submit' | 'reset'
+  disabled?: boolean
+  target?: '_blank' | '_self'
+  class?: string
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  disabled = false,
+  target,
+  class: className,
+} = Astro.props
+
+const base =
+  'inline-flex items-center justify-center gap-2 font-semibold leading-none transition-all duration-200 cursor-pointer select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red active:scale-95 disabled:opacity-50 disabled:pointer-events-none'
+
+const variants: Record<string, string> = {
+  primary:
+    'bg-brand-red text-white rounded-lg hover:bg-brand-red-dark shadow-sm',
+  outline:
+    'border-2 border-brand-red text-brand-red rounded-lg hover:bg-brand-red hover:text-white',
+  ghost:
+    'text-text-primary rounded-lg hover:bg-surface-overlay',
+  dark:
+    'bg-surface-overlay text-text-primary rounded-lg hover:bg-surface-muted',
+  pill:
+    'bg-brand-red text-white rounded-pill hover:bg-brand-red-dark shadow-sm',
+}
+
+const sizes: Record<string, string> = {
+  sm: 'px-4 py-1.5 text-sm',
+  md: 'px-6 py-2.5 text-base',
+  lg: 'px-8 py-3.5 text-lg',
+}
+
+const classes = [base, variants[variant], sizes[size], className]
+---
+
+{
+  href ? (
+    <a
+      href={href}
+      target={target}
+      rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+      class:list={classes}
+    >
+      <slot />
+    </a>
+  ) : (
+    <button type={type} disabled={disabled} class:list={classes}>
+      <slot />
+    </button>
+  )
+}
