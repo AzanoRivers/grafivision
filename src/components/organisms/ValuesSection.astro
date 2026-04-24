@@ -16,33 +16,33 @@ const { class: className } = Astro.props
 
 const values: ValueItem[] = [
   {
-    icon: 'creativity',
-    title: 'Creatividad estratégica',
-    description: 'No diseñamos por estética aislada. Cada decisión visual parte de entender el mercado, el público y los objetivos del negocio.',
+    icon: 'experiencia',
+    title: 'Experiencia',
+    description: 'Más de 33 años de trayectoria en el sector gráfico.',
   },
   {
-    icon: 'precision',
-    title: 'Precisión técnica',
-    description: 'Tipografía, color, retícula y acabados con estándares de impresión internacional. Lo que diseñamos también funciona en producción.',
+    icon: 'calidad',
+    title: 'Calidad',
+    description: 'Procesos controlados que garantizan resultados consistentes.',
   },
   {
-    icon: 'commitment',
-    title: 'Compromiso total',
-    description: 'No entregamos borradores. Cada pieza pasa por iteración interna antes de llegar al cliente. Su tiempo es tan valioso como su marca.',
+    icon: 'tecnologia',
+    title: 'Tecnología',
+    description: 'Equipos de impresión de última generación.',
   },
   {
-    icon: 'results',
-    title: 'Orientación a resultados',
-    description: 'El diseño es un medio, no un fin. Medimos el éxito por el impacto que genera: posicionamiento, reconocimiento y ventas reales.',
+    icon: 'sostenibilidad',
+    title: 'Sostenibilidad',
+    description: 'Procesos responsables con el medio ambiente.',
   },
 ]
 
 // Inline SVG paths per value (no icon library dependency)
 const iconPaths: Record<string, string> = {
-  creativity: 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z',
-  precision: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
-  commitment: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z',
-  results: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6',
+  experiencia: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
+  calidad: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
+  tecnologia: 'M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
+  sostenibilidad: 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
 }
 ---
 
@@ -52,19 +52,19 @@ const iconPaths: Record<string, string> = {
     <!-- Header -->
     <Reveal class="text-center">
       <span class="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
-        Nuestros valores
+        Nuestros diferenciales
       </span>
       <h2 class="font-display text-3xl font-bold text-text-primary xl:text-4xl">
-        Lo que nos define
+        Lo que nos diferencia
       </h2>
       <Divider variant="accent" class="mx-auto my-6 w-12" />
       <p class="mx-auto max-w-xl text-text-secondary leading-relaxed">
-        Principios que guían cada proyecto, cada decisión y cada entrega.
+        Los pilares que guían cada proyecto y cada entrega en GrafiVisión.
       </p>
     </Reveal>
 
     <!-- Values grid -->
-    <div class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+    <div class="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2 2xl:grid-cols-4">
       {values.map((v, i) => (
         <Reveal delay={Math.min(i, 3) as 0|1|2|3}>
           <article class="group flex flex-col gap-5 rounded-2xl border border-surface-border bg-surface-overlay p-6 transition-colors duration-300 hover:border-brand-red/40">

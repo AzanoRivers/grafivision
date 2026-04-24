@@ -1,23 +1,25 @@
 ---
-import { ContactForm } from '@/components/islands/ContactForm'
-import ContactInfoItem from '@/components/molecules/ContactInfoItem.astro'
-import MapEmbed from '@/components/organisms/MapEmbed.astro'
-import SocialLink from '@/components/molecules/SocialLink.astro'
-import Reveal from '@/components/transitions/Reveal.astro'
-import { contactInfo } from '@/lib/data/contact'
+import { ContactForm } from "@/components/islands/ContactForm";
+import ContactInfoItem from "@/components/molecules/ContactInfoItem.astro";
+import SocialLink from "@/components/molecules/SocialLink.astro";
+import MapEmbed from "@/components/organisms/MapEmbed.astro";
+import Reveal from "@/components/transitions/Reveal.astro";
+import { contactInfo } from "@/lib/data/contact";
 
 interface Props {
-  class?: string
+  class?: string;
 }
 
-const { class: className } = Astro.props
+const { class: className } = Astro.props;
 ---
 
-<section class:list={['bg-surface-base', className]} id="contacto">
+<section class:list={["bg-surface-base", className]} id="contacto">
   <div class="container-content section-padding section-gap">
     <!-- Header -->
     <Reveal class="mb-12 text-center">
-      <span class="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
+      <span
+        class="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red"
+      >
         Contacto
       </span>
       <h2 class="font-display text-3xl font-bold text-text-primary xl:text-5xl">
@@ -40,10 +42,20 @@ const { class: className } = Astro.props
           />
           <ContactInfoItem
             icon="phone"
-            label="Teléfono"
+            label="Teléfono fijo"
             value={contactInfo.phone}
-            href={`tel:${contactInfo.phone.replace(/\s/g, '')}`}
+            href={`tel:${contactInfo.phone.replace(/\s/g, "")}`}
           />
+          {
+            contactInfo.mobile && (
+              <ContactInfoItem
+                icon="smartphone"
+                label="Móvil"
+                value={contactInfo.mobile}
+                href={`tel:${contactInfo.mobile.replace(/\s/g, "")}`}
+              />
+            )
+          }
           <ContactInfoItem
             icon="map-pin"
             label="Ubicación"
@@ -58,11 +70,39 @@ const { class: className } = Astro.props
 
         <!-- Social -->
         <div>
-          <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-text-muted">Síguenos</p>
+          <p
+            class="mb-3 text-xs font-semibold uppercase tracking-wider text-text-muted"
+          >
+            Síguenos
+          </p>
           <div class="flex gap-4">
-            {contactInfo.social.instagram && <SocialLink platform="instagram" href={contactInfo.social.instagram} label />}
-            {contactInfo.social.linkedin  && <SocialLink platform="linkedin"  href={contactInfo.social.linkedin}  label />}
-            {contactInfo.social.behance   && <SocialLink platform="behance"   href={contactInfo.social.behance}   label />}
+            {
+              contactInfo.social.instagram && (
+                <SocialLink
+                  platform="instagram"
+                  href={contactInfo.social.instagram}
+                  label
+                />
+              )
+            }
+            {
+              contactInfo.social.linkedin && (
+                <SocialLink
+                  platform="linkedin"
+                  href={contactInfo.social.linkedin}
+                  label
+                />
+              )
+            }
+            {
+              contactInfo.social.behance && (
+                <SocialLink
+                  platform="behance"
+                  href={contactInfo.social.behance}
+                  label
+                />
+              )
+            }
           </div>
         </div>
 
@@ -72,8 +112,12 @@ const { class: className } = Astro.props
 
       <!-- Right: form -->
       <Reveal delay={1}>
-        <div class="rounded-2xl border border-surface-border bg-surface-raised p-6 xl:p-8">
-          <h3 class="font-display text-xl font-bold text-text-primary mb-6">Envíanos un mensaje</h3>
+        <div
+          class="rounded-2xl border border-surface-border bg-surface-raised p-6 xl:p-8"
+        >
+          <h3 class="font-display text-xl font-bold text-text-primary mb-6">
+            Envíanos un mensaje
+          </h3>
           <ContactForm client:visible />
         </div>
       </Reveal>

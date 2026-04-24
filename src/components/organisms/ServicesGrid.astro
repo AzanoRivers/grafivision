@@ -1,45 +1,55 @@
 ---
-import ServiceItem from '@/components/molecules/ServiceItem.astro'
-import Reveal from '@/components/transitions/Reveal.astro'
-import { services } from '@/lib/data/services'
+import ServiceItem from "@/components/molecules/ServiceItem.astro";
+import Reveal from "@/components/transitions/Reveal.astro";
+import { services } from "@/lib/data/services";
 
 interface Props {
-  title?: string
-  subtitle?: string
-  class?: string
+  title?: string;
+  subtitle?: string;
+  class?: string;
 }
 
 const {
-  title = 'Nuestros servicios',
-  subtitle = 'Soluciones de diseño gráfico para cada etapa de tu marca.',
+  title = "Nuestros servicios",
+  subtitle = "Soluciones de diseño gráfico para cada etapa de tu marca.",
   class: className,
-} = Astro.props
+} = Astro.props;
 ---
 
-<section class:list={['bg-surface-base', className]}>
+<section class:list={["bg-surface-base", className]}>
   <div class="container-content section-padding section-gap">
     <!-- Header -->
     <Reveal class="mb-12 text-center">
-      <span class="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
+      <span
+        class="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red"
+      >
         Servicios
       </span>
-      <h2 class="font-display text-3xl font-bold text-text-primary xl:text-5xl">{title}</h2>
-      {subtitle && <p class="mt-4 text-text-secondary max-w-xl mx-auto">{subtitle}</p>}
+      <h2 class="font-display text-3xl font-bold text-text-primary xl:text-5xl">
+        {title}
+      </h2>
+      {
+        subtitle && (
+          <p class="mt-4 text-text-secondary max-w-xl mx-auto">{subtitle}</p>
+        )
+      }
     </Reveal>
 
     <!-- Grid -->
-    <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-      {services.map((service, i) => (
-        <Reveal delay={(i % 4 + 1) as 1|2|3|4}>
-          <ServiceItem
-            title={service.title}
-            description={service.description}
-            icon={service.icon}
-            index={i}
-            class="h-full"
-          />
-        </Reveal>
-      ))}
+    <div class="grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-4">
+      {
+        services.map((service, i) => (
+          <Reveal delay={((i % 4) + 1) as 1 | 2 | 3 | 4}>
+            <ServiceItem
+              title={service.title}
+              description={service.description}
+              icon={service.icon}
+              index={i}
+              class="h-full"
+            />
+          </Reveal>
+        ))
+      }
     </div>
   </div>
 </section>

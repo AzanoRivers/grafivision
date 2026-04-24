@@ -1,6 +1,6 @@
 ---
-import Blockquote from '@/components/atoms/Blockquote.astro'
 import Avatar from '@/components/atoms/Avatar.astro'
+import Blockquote from '@/components/atoms/Blockquote.astro'
 import Reveal from '@/components/transitions/Reveal.astro'
 import { testimonials } from '@/lib/data/testimonials'
 
@@ -22,7 +22,7 @@ const { class: className } = Astro.props
       </h2>
     </Reveal>
 
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 2xl:grid-cols-4">
       {testimonials.map((t, i) => (
         <Reveal delay={(i % 4 + 1) as 1|2|3|4}>
           <article class="flex flex-col gap-5 rounded-2xl border border-surface-border bg-surface-raised p-6 h-full">

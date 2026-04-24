@@ -287,20 +287,20 @@ export function HeroSlider() {
         className="container-content section-padding relative z-10 flex flex-col items-center py-32 text-center"
       >
         <p
-          className="animate-hero-cta mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-white/85"
+          className="animate-hero-cta mb-5 text-xs font-semibold uppercase tracking-[0.1em] xl:tracking-[0.25em] text-white/85 max-w-xs xl:max-w-none"
           style={{ textShadow: '0 1px 8px rgba(0,0,0,0.6)' }}
         >
           {slide.tag}
         </p>
         <div className="animate-hero-cta mb-6 h-px w-16 bg-white/40" aria-hidden="true" style={{ animationDelay: '0.1s' }} />
         <h1
-          className="animate-hero-word font-display text-6xl font-bold leading-none tracking-tight text-white xl:text-8xl"
+          className="animate-hero-word font-display text-4xl lg:text-5xl xl:text-7xl 2xl:text-8xl font-bold leading-none tracking-tight text-white"
           style={{ textShadow: '0 2px 20px rgba(0,0,0,0.55), 0 1px 6px rgba(0,0,0,0.4)' }}
         >
           {slide.word}
         </h1>
         <p
-          className="animate-hero-tag mt-4 text-lg font-medium text-white/90 xl:text-2xl"
+          className="animate-hero-tag mt-4 text-base lg:text-lg font-medium text-white/90 xl:text-2xl max-w-sm xl:max-w-none"
           style={{ textShadow: '0 1px 10px rgba(0,0,0,0.65)' }}
         >
           {slide.desc}

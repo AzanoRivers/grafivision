@@ -91,6 +91,7 @@ export interface Testimonial {
 export interface ContactInfo {
   address: string
   phone: string
+  mobile?: string
   whatsapp?: string
   email: string
   schedule: string
