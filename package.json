@@ -2,9 +2,6 @@
   "name": "grafivision-web",
   "type": "module",
   "version": "0.0.1",
-  "engines": {
-    "node": "22.x"
-  },
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild",
