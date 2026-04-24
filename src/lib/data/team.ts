@@ -6,10 +6,10 @@ export const teamMembers: TeamMember[] = [
     name: 'GrafiVisión',
     role: 'Director Creativo',
     bio: 'Más de 33 años liderando proyectos de producción gráfica e impresión para empresas colombianas e internacionales.',
-    photo: '/images/brand/GF-1.webp',
+    photo: '/images/banner/banner_1.png',
     social: {
       instagram: 'https://instagram.com/grafivision',
-      behance:   'https://behance.net/grafivision',
+      behance: 'https://behance.net/grafivision',
     },
   },
   {
@@ -17,10 +17,10 @@ export const teamMembers: TeamMember[] = [
     name: 'GrafiVisión Studio',
     role: 'Diseñadora Senior',
     bio: 'Especialista en branding y packaging con enfoque en consumo masivo y productos premium de exportación.',
-    photo: '/images/brand/GF-2.webp',
+    photo: '/images/banner/banner_2.png',
     social: {
       instagram: 'https://instagram.com/grafivision',
-      behance:   'https://behance.net/grafivision',
+      behance: 'https://behance.net/grafivision',
     },
   },
   {
@@ -28,7 +28,7 @@ export const teamMembers: TeamMember[] = [
     name: 'GrafiVisión',
     role: 'Ilustrador & Motion',
     bio: 'Experto en ilustración digital y piezas de animación para campañas publicitarias y contenido de marca.',
-    photo: '/images/brand/GF-4.webp',
+    photo: '/images/banner/banner_3.png',
     social: {
       behance: 'https://behance.net/grafivision',
     },
@@ -38,7 +38,7 @@ export const teamMembers: TeamMember[] = [
     name: 'GrafiVisión Studio',
     role: 'Diseñadora Digital',
     bio: 'Especialista en piezas digitales, redes sociales y comunicación visual para plataformas online.',
-    photo: '/images/brand/GF-5.webp',
+    photo: '/images/banner/banner_4.png',
     social: {
       instagram: 'https://instagram.com/grafivision',
     },
@@ -48,7 +48,7 @@ export const teamMembers: TeamMember[] = [
     name: 'GrafiVisión',
     role: 'Coordinador de Proyectos',
     bio: 'Garantiza que cada entrega sea puntual, precisa y alineada con los objetivos estratégicos del cliente.',
-    photo: '/images/brand/GF-6.webp',
+    photo: '/images/banner/vertical_banner.png',
     social: {
       linkedin: 'https://linkedin.com/company/grafivision',
     },

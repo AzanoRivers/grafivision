@@ -3,15 +3,15 @@
 export const SHOWCASE_IMAGES = {
   portfolio: Array.from({ length: 20 }, (_, i) => `/images/portfolio/Foto-${i + 1}.webp`),
   brand: [
-    '/images/brand/GF-1.webp',
-    '/images/brand/GF-2.webp',
-    '/images/brand/GF-4.webp',
+    '/images/banner/banner_1.png',
+    '/images/banner/banner_2.png',
+    '/images/banner/banner_3.png',
   ],
-  parallax: ['/images/brand/GF-5.webp', '/images/brand/GF-6.webp'],
-  hero:     '/images/brand/GF-1.webp',
+  parallax: ['/images/banner/banner_4.png', '/images/banner/vertical_banner.png'],
+  hero: '/images/banner/vertical_banner.png',
 }
 
 export const SHOWCASE_VIDEOS = {
-  hero:    '/videos/machine/maquina_1_min.mp4',
+  hero: '/videos/machine/maquina_1_min.mp4',
   process: '/videos/machine/maquina_2_min.mp4',
 }

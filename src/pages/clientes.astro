@@ -1,23 +1,23 @@
 ---
-import PageLayout from '@/layouts/PageLayout.astro'
-import PageHero from '@/components/organisms/PageHero.astro'
-import Testimonials from '@/components/organisms/Testimonials.astro'
-import StatsSection from '@/components/organisms/StatsSection.astro'
-import CtaBanner from '@/components/organisms/CtaBanner.astro'
-import Reveal from '@/components/transitions/Reveal.astro'
-import Divider from '@/components/atoms/Divider.astro'
+import Divider from "@/components/atoms/Divider.astro";
+import CtaBanner from "@/components/organisms/CtaBanner.astro";
+import PageHero from "@/components/organisms/PageHero.astro";
+import StatsSection from "@/components/organisms/StatsSection.astro";
+import Testimonials from "@/components/organisms/Testimonials.astro";
+import Reveal from "@/components/transitions/Reveal.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
 ---
 
 <PageLayout
   title="Clientes"
   description="En GrafiVisión creemos en las relaciones de largo plazo. Desarrollamos soluciones gráficas que fortalecen sus marcas y generan valor en sus campañas publicitarias."
-  preloadImage="/images/brand/GF-4.webp"
+  preloadImage="/images/banner/vertical_banner.png"
 >
   <PageHero
     badge="Clientes"
     title="Trabajemos en equipo"
     subtitle="Creemos en las relaciones de largo plazo con nuestros clientes."
-    image="/images/brand/GF-4.webp"
+    image="/images/banner/vertical_banner.png"
   />
 
   <!-- Intro -->
@@ -25,33 +25,43 @@ import Divider from '@/components/atoms/Divider.astro'
     <div class="container-content section-padding section-gap">
       <div class="mx-auto max-w-3xl text-center">
         <Reveal>
-          <span class="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
+          <span
+            class="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red"
+          >
             Nuestra relación con los clientes
           </span>
-          <h2 class="font-display text-3xl font-bold text-text-primary xl:text-4xl">
+          <h2
+            class="font-display text-3xl font-bold text-text-primary xl:text-4xl"
+          >
             Socios estratégicos, no solo proveedores
           </h2>
           <Divider variant="accent" class="mx-auto my-6 w-12" />
           <p class="text-text-secondary leading-relaxed">
-            En GrafiVisión desarrollamos soluciones gráficas que fortalecen sus marcas
-            y generan valor en sus campañas publicitarias. Acompañamos a cada cliente
-            desde la concepción hasta la entrega final, garantizando calidad, cumplimiento
-            e innovación en cada proyecto.
+            En GrafiVisión desarrollamos soluciones gráficas que fortalecen sus
+            marcas y generan valor en sus campañas publicitarias. Acompañamos a
+            cada cliente desde la concepción hasta la entrega final,
+            garantizando calidad, cumplimiento e innovación en cada proyecto.
           </p>
         </Reveal>
       </div>
 
       <!-- Logos grid — pendiente agregar logos de clientes -->
       <Reveal delay={1} class="mt-16">
-        <p class="mb-8 text-center text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
+        <p
+          class="mb-8 text-center text-xs font-semibold uppercase tracking-[0.2em] text-text-muted"
+        >
           Empresas que confían en nosotros
         </p>
         <div class="grid grid-cols-2 gap-6 md:grid-cols-3 xl:grid-cols-5">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <div class="flex h-20 items-center justify-center rounded-xl border border-surface-border bg-surface-raised px-6 transition-colors duration-200 hover:border-brand-red/30">
-              <span class="text-xs font-medium text-text-muted">Logo {i + 1}</span>
-            </div>
-          ))}
+          {
+            Array.from({ length: 10 }).map((_, i) => (
+              <div class="flex h-20 items-center justify-center rounded-xl border border-surface-border bg-surface-raised px-6 transition-colors duration-200 hover:border-brand-red/30">
+                <span class="text-xs font-medium text-text-muted">
+                  Logo {i + 1}
+                </span>
+              </div>
+            ))
+          }
         </div>
         <p class="mt-6 text-center text-xs text-text-muted">
           * Logos de clientes pendientes de envío

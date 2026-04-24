@@ -1,104 +1,118 @@
 ---
-import PageLayout from '@/layouts/PageLayout.astro'
-import PageHero from '@/components/organisms/PageHero.astro'
-import Divider from '@/components/atoms/Divider.astro'
-import Reveal from '@/components/transitions/Reveal.astro'
-import { TeamCarousel } from '@/components/islands/TeamCarousel'
-import CtaBanner from '@/components/organisms/CtaBanner.astro'
-import SubscribeBar from '@/components/organisms/SubscribeBar.astro'
-import { teamMembers } from '@/lib/data/team'
+import Divider from "@/components/atoms/Divider.astro";
+import { TeamCarousel } from "@/components/islands/TeamCarousel";
+import CtaBanner from "@/components/organisms/CtaBanner.astro";
+import PageHero from "@/components/organisms/PageHero.astro";
+import SubscribeBar from "@/components/organisms/SubscribeBar.astro";
+import Reveal from "@/components/transitions/Reveal.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { teamMembers } from "@/lib/data/team";
 
 const pillars = [
   {
-    icon: 'collab',
-    title: 'Colaboración directa',
-    desc: 'Cada cliente trabaja directamente con los diseñadores. Sin intermediarios, sin malentendidos, sin capas de burocracia.',
+    icon: "collab",
+    title: "Colaboración directa",
+    desc: "Cada cliente trabaja directamente con los diseñadores. Sin intermediarios, sin malentendidos, sin capas de burocracia.",
   },
   {
-    icon: 'quality',
-    title: 'Calidad sin atajos',
-    desc: 'No entregamos primeras versiones sin filtro interno. Cada pieza pasa por revisión de equipo antes de llegar al cliente.',
+    icon: "quality",
+    title: "Calidad sin atajos",
+    desc: "No entregamos primeras versiones sin filtro interno. Cada pieza pasa por revisión de equipo antes de llegar al cliente.",
   },
   {
-    icon: 'ownership',
-    title: 'Propiedad del resultado',
-    desc: 'Nos importa el impacto real de cada proyecto, no solo el cierre. Somos tu aliado creativo a largo plazo.',
+    icon: "ownership",
+    title: "Propiedad del resultado",
+    desc: "Nos importa el impacto real de cada proyecto, no solo el cierre. Somos tu aliado creativo a largo plazo.",
   },
-]
+];
 
 const iconPaths: Record<string, string> = {
-  collab:    'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z',
-  quality:   'M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z',
-  ownership: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
-}
+  collab:
+    "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z",
+  quality:
+    "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z",
+  ownership:
+    "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
+};
 ---
 
 <PageLayout
   title="Equipo"
   description="Conoce a las personas detrás de GrafiVisión, agencia creativa colombiana. Un equipo compacto, apasionado y comprometido con la excelencia visual."
-  preloadImage="/images/brand/GF-5.webp"
+  preloadImage="/images/banner/vertical_banner.png"
 >
-
   <PageHero
     badge="El equipo"
     title="Las personas detrás de GrafiVisión"
     subtitle="Un equipo pequeño con grandes capacidades. Cada persona aporta especialización y pasión en su área."
-    image="/images/brand/GF-5.webp"
+    image="/images/banner/vertical_banner.png"
   />
 
   <!-- ── Intro narrative ─────────────────────────────────── -->
   <section class="bg-surface-base">
     <div class="container-content section-padding section-gap">
-      <div class="grid grid-cols-1 gap-12 xl:grid-cols-2 xl:items-center xl:gap-20">
-
+      <div
+        class="grid grid-cols-1 gap-12 xl:grid-cols-2 xl:items-center xl:gap-20"
+      >
         <Reveal>
-          <span class="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
+          <span
+            class="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red"
+          >
             Quiénes somos
           </span>
-          <h2 class="font-display text-3xl font-bold leading-tight text-text-primary xl:text-4xl">
+          <h2
+            class="font-display text-3xl font-bold leading-tight text-text-primary xl:text-4xl"
+          >
             Un estudio creativo,<br />no una fábrica de diseño
           </h2>
           <Divider variant="accent" class="my-6 w-12" />
           <p class="text-text-secondary leading-relaxed">
-            En GrafiVisión creemos que el diseño excepcional viene de personas que conocen
-            profundamente su oficio. Por eso somos un equipo compacto y especializado,
-            donde cada proyecto tiene asignado un profesional dedicado.
+            En GrafiVisión creemos que el diseño excepcional viene de personas
+            que conocen profundamente su oficio. Por eso somos un equipo
+            compacto y especializado, donde cada proyecto tiene asignado un
+            profesional dedicado.
           </p>
           <p class="mt-4 text-text-secondary leading-relaxed">
-            No tercerizamos ni delegamos a practicantes. Cuando contratas a GrafiVisión,
-            trabajas directamente con quienes llevan años perfeccionando cada disciplina.
+            No tercerizamos ni delegamos a practicantes. Cuando contratas a
+            GrafiVisión, trabajas directamente con quienes llevan años
+            perfeccionando cada disciplina.
           </p>
         </Reveal>
 
         <!-- Culture pillars -->
         <div class="flex flex-col gap-6">
-          {pillars.map((p, i) => (
-            <Reveal delay={(i + 1) as 1|2|3}>
-              <div class="flex items-start gap-5 rounded-2xl border border-surface-border bg-surface-raised p-5">
-                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-red/10 text-brand-red">
-                  <svg
-                    width={20}
-                    height={20}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d={iconPaths[p.icon]} />
-                  </svg>
+          {
+            pillars.map((p, i) => (
+              <Reveal delay={(i + 1) as 1 | 2 | 3}>
+                <div class="flex items-start gap-5 rounded-2xl border border-surface-border bg-surface-raised p-5">
+                  <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-red/10 text-brand-red">
+                    <svg
+                      width={20}
+                      height={20}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d={iconPaths[p.icon]} />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="font-display text-sm font-bold text-text-primary">
+                      {p.title}
+                    </h3>
+                    <p class="mt-1.5 text-sm text-text-secondary leading-relaxed">
+                      {p.desc}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 class="font-display text-sm font-bold text-text-primary">{p.title}</h3>
-                  <p class="mt-1.5 text-sm text-text-secondary leading-relaxed">{p.desc}</p>
-                </div>
-              </div>
-            </Reveal>
-          ))}
+              </Reveal>
+            ))
+          }
         </div>
-
       </div>
     </div>
   </section>
@@ -106,23 +120,26 @@ const iconPaths: Record<string, string> = {
   <!-- ── Team carousel ──────────────────────────────────── -->
   <section class="bg-surface-raised">
     <div class="container-content section-padding section-gap">
-
       <Reveal class="mb-12 text-center">
-        <span class="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
+        <span
+          class="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-red"
+        >
           Nuestro equipo
         </span>
-        <h2 class="font-display text-3xl font-bold text-text-primary xl:text-4xl">
+        <h2
+          class="font-display text-3xl font-bold text-text-primary xl:text-4xl"
+        >
           Conoce a cada integrante
         </h2>
         <Divider variant="accent" class="mx-auto my-6 w-12" />
         <p class="mx-auto max-w-lg text-text-secondary leading-relaxed">
-          Cada persona del equipo aporta especialización profunda en su disciplina
-          y un compromiso con la calidad que se refleja en cada entrega.
+          Cada persona del equipo aporta especialización profunda en su
+          disciplina y un compromiso con la calidad que se refleja en cada
+          entrega.
         </p>
       </Reveal>
 
       <TeamCarousel client:visible members={teamMembers} />
-
     </div>
   </section>
 
@@ -130,17 +147,21 @@ const iconPaths: Record<string, string> = {
   <section class="border-y border-surface-border bg-surface-base">
     <div class="container-content section-padding py-12">
       <div class="grid grid-cols-2 gap-8 xl:grid-cols-4">
-        {[
-          { value: '12+', label: 'Años de experiencia' },
-          { value: '5',   label: 'Especialistas dedicados' },
-          { value: '350+', label: 'Proyectos completados' },
-          { value: '4',   label: 'Disciplinas del diseño' },
-        ].map((stat, i) => (
-          <Reveal delay={(i % 4) as 0|1|2|3} class="text-center">
-            <p class="font-display text-4xl font-bold text-brand-red xl:text-5xl">{stat.value}</p>
-            <p class="mt-2 text-sm text-text-muted">{stat.label}</p>
-          </Reveal>
-        ))}
+        {
+          [
+            { value: "12+", label: "Años de experiencia" },
+            { value: "5", label: "Especialistas dedicados" },
+            { value: "350+", label: "Proyectos completados" },
+            { value: "4", label: "Disciplinas del diseño" },
+          ].map((stat, i) => (
+            <Reveal delay={(i % 4) as 0 | 1 | 2 | 3} class="text-center">
+              <p class="font-display text-4xl font-bold text-brand-red xl:text-5xl">
+                {stat.value}
+              </p>
+              <p class="mt-2 text-sm text-text-muted">{stat.label}</p>
+            </Reveal>
+          ))
+        }
       </div>
     </div>
   </section>
@@ -155,5 +176,4 @@ const iconPaths: Record<string, string> = {
   />
 
   <SubscribeBar />
-
 </PageLayout>

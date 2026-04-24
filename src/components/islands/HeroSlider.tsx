@@ -1,135 +1,194 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+
+/**
+ * Architecture: no React `key` changes on the animation div.
+ * Previous approach changed `key` to restart CSS animations — this caused
+ * React to unmount+remount the element, creating a 1-frame window where
+ * no slide image was visible, showing the bg-black container.
+ *
+ * Fix: animation divs are NEVER unmounted. The animation is restarted
+ * imperatively via refs (set animation='none', read offsetWidth to force
+ * reflow, re-apply animation). This is the standard browser technique
+ * for restarting a CSS animation on a live element.
+ *
+ * Additionally: all async callbacks (goTo, interval) use refs instead of
+ * closures over `current` to eliminate stale-closure bugs.
+ */
 
 interface Slide {
   image: string
-  word:  string
-  tag:   string
-  desc:  string
+  word: string
+  tag: string
+  desc: string
 }
 
 const slides: Slide[] = [
   {
     image: '/images/banner/banner_1.png',
-    word:  'GrafiVisión',
-    tag:   'Más de 33 años en artes gráficas',
-    desc:  'Soluciones integrales en impresión y producción publicitaria en Bogotá.',
+    word: 'GrafiVisión',
+    tag: 'Más de 33 años en artes gráficas',
+    desc: 'Soluciones integrales en impresión y producción publicitaria en Bogotá.',
   },
   {
     image: '/images/banner/banner_2.png',
-    word:  'Empaques',
-    tag:   'Diseño y producción de empaques',
-    desc:  'Cajas, estuches y packaging con acabados de lujo para tu marca.',
+    word: 'Empaques',
+    tag: 'Diseño y producción de empaques',
+    desc: 'Cajas, estuches y packaging con acabados de lujo para tu marca.',
   },
   {
     image: '/images/banner/banner_3.png',
-    word:  'Offset',
-    tag:   'Impresión Offset & Digital',
-    desc:  'Alta definición y fidelidad de color en tirajes cortos y grandes volúmenes.',
+    word: 'Offset',
+    tag: 'Impresión Offset & Digital',
+    desc: 'Alta definición y fidelidad de color en tirajes cortos y grandes volúmenes.',
   },
   {
     image: '/images/banner/banner_4.png',
-    word:  'Formato',
-    tag:   'Gran Formato & Material POP',
-    desc:  'Pendones, vinilos, exhibidores y piezas de alto impacto visual.',
+    word: 'Formato',
+    tag: 'Gran Formato & Material POP',
+    desc: 'Pendones, vinilos, exhibidores y piezas de alto impacto visual.',
   },
 ]
 
-const INTERVAL   = 5800
-const ENTER_MS   = 750
-const EXIT_MS    = 900   // EXIT > ENTER: old slide stays visible until new fully covers
-const CLEAR_MS   = 1050  // fires after EXIT_MS
+const INTERVAL = 5800
+const ENTER_MS = 750
+const CLEAR_MS = ENTER_MS + 200
+
+// Module-level image cache — persists across re-renders
+const imageCache = new Set<string>()
+
+// Uses img.decode() — waits for BOTH network download AND pixel decode to complete.
+// img.onload only signals download done; decoding="async" defers pixel decode, which
+// causes the browser to show a black frame when the slide is made visible before
+// the decode finishes. decode() guarantees the browser can paint immediately.
+async function preloadImage(src: string): Promise<void> {
+  if (imageCache.has(src)) return
+  const img = new window.Image()
+  img.src = src
+  try {
+    await img.decode() // download + decode — browser can paint instantly after this
+  } catch {
+    // decode() can reject for SVGs or unsupported formats — never block on error
+  }
+  imageCache.add(src)
+}
 
 function padTwo(n: number) { return String(n).padStart(2, '0') }
 
 export function HeroSlider() {
-  const [current,     setCurrent]     = useState(0)
-  const [prev,        setPrev]        = useState<number | null>(null)
-  const [animKey,     setAnimKey]     = useState(0)
-  const [direction,   setDirection]   = useState<'ltr' | 'rtl'>('ltr')
-  const [enterCounts, setEnterCounts] = useState<number[]>(() => slides.map((_, i) => i === 0 ? 1 : 0))
-  const [exitCounts,  setExitCounts]  = useState<number[]>(() => slides.map(() => 0))
+  const [current, setCurrent] = useState(0)
+  const [prev, setPrev] = useState<number | null>(null)
+  const [animKey, setAnimKey] = useState(0)
+  const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr')
+  // Tracks confirmed-loaded slides — prevents bg-black showing on unloaded images
+  const [imagesReady, setImagesReady] = useState<boolean[]>(() =>
+    slides.map(() => false) // all start false; slide 0 becomes true after decode
+  )
+  // Skeleton states: skeletonOut triggers fade, skeletonGone unmounts after fade
+  const [skeletonOut, setSkeletonOut] = useState(false)
+  const [skeletonGone, setSkeletonGone] = useState(false)
 
-  const touchX        = useRef<number | null>(null)
-  const sectionRef    = useRef<HTMLElement>(null)
-  const wheelCooldown = useRef(false)
-  // Skip brush-in on very first render — no previous slide to reveal over
+  // ── Refs ──────────────────────────────────────────────────────────
+  const touchX = useRef<number | null>(null)
+  const sectionRef = useRef<HTMLElement>(null)
+
   const isFirstRender = useRef(true)
-  // Refs for cursor parallax (one per slide)
-  const parallaxRefs  = useRef<(HTMLDivElement | null)[]>(slides.map(() => null))
+  // Animation wrapper divs — restarted imperatively, never unmounted
+  const animDivRefs = useRef<(HTMLDivElement | null)[]>(slides.map(() => null))
+  // Always-fresh current index — avoids stale closures in async/timer callbacks
+  const currentRef = useRef(0)
+  useEffect(() => { currentRef.current = current }, [current])
 
+  // Interval ref — lets any navigation call reset the timer
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const resetTimer = useCallback(() => {
+    if (timerRef.current !== null) clearInterval(timerRef.current)
+    timerRef.current = setInterval(() => goNextRef.current(), INTERVAL)
+  }, [])
+
+  // ── Imperative animation restart (useLayoutEffect) ──────────────────────
+  // MUST be useLayoutEffect, not useEffect.
+  // useEffect fires AFTER the browser paints — the new slide would be visible
+  // for one frame without clip-path (full image flash) before the animation starts.
+  // useLayoutEffect fires synchronously after DOM mutations and BEFORE paint,
+  // so the clip-path is already set when the browser renders the first frame.
+  useLayoutEffect(() => {
+    if (isFirstRender.current) return
+    const div = animDivRefs.current[current]
+    if (!div) return
+    div.style.animation = 'none'
+    void div.offsetWidth // force reflow — resets animation state in the GPU
+    div.style.animation = `enter-${direction} ${ENTER_MS}ms cubic-bezier(0.4,0,0.2,1) both`
+    div.style.willChange = 'clip-path'
+    const cleanup = setTimeout(() => { if (div) div.style.willChange = 'auto' }, ENTER_MS + 50)
+    return () => clearTimeout(cleanup)
+  }, [current, direction]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Navigation ────────────────────────────────────────────────────
   const goTo = useCallback((index: number, dir: 'ltr' | 'rtl' = 'ltr') => {
-    isFirstRender.current = false
-    const leaving = current
-    setDirection(dir)
-    setPrev(leaving)
-    setCurrent(index)
-    setAnimKey(k => k + 1)
-    setEnterCounts(c => c.map((v, i) => i === index  ? v + 1 : v))
-    setExitCounts (c => c.map((v, i) => i === leaving ? v + 1 : v))
-  }, [current])
+    // Block until image confirmed loaded — prevents bg-black showing
+    preloadImage(slides[index].image).then(() => {
+      setImagesReady(r => r.map((v, i) => i === index ? true : v))
+      isFirstRender.current = false
+      const leaving = currentRef.current // always fresh — no stale closure
+      setDirection(dir)
+      setPrev(leaving)
+      setCurrent(index)
+      setAnimKey(k => k + 1)
+      resetTimer() // reset interval so next auto-advance is always INTERVAL ms away
+    })
+  }, [resetTimer])
 
-  const goPrev = useCallback(() => goTo((current - 1 + slides.length) % slides.length, 'rtl'), [current, goTo])
-  const goNext = useCallback(() => goTo((current + 1) % slides.length, 'ltr'), [current, goTo])
+  const goPrev = useCallback(() => {
+    const idx = (currentRef.current - 1 + slides.length) % slides.length
+    goTo(idx, 'rtl')
+  }, [goTo])
 
-  // Clear prev AFTER enter animation completes (no re-render mid-animation)
+  const goNext = useCallback(() => {
+    const idx = (currentRef.current + 1) % slides.length
+    goTo(idx, 'ltr')
+  }, [goTo])
+
+  // Stable handler refs for effects that must not re-subscribe on every render
+  const goNextRef = useRef(goNext)
+  const goPrevRef = useRef(goPrev)
+  useEffect(() => { goNextRef.current = goNext }, [goNext])
+  useEffect(() => { goPrevRef.current = goPrev }, [goPrev])
+
+  // Clear exiting slide after brush animation completes
   useEffect(() => {
     if (prev === null) return
     const t = setTimeout(() => setPrev(null), CLEAR_MS)
     return () => clearTimeout(t)
   }, [prev])
 
-  // Keep nav refs current for wheel handler
-  const goNextRef = useRef(goNext)
-  const goPrevRef = useRef(goPrev)
-  useEffect(() => { goNextRef.current = goNext }, [goNext])
-  useEffect(() => { goPrevRef.current = goPrev }, [goPrev])
-
-  // Auto-advance
+  // Eager preload all images on mount
   useEffect(() => {
-    const timer = setInterval(goNext, INTERVAL)
-    return () => clearInterval(timer)
-  }, [goNext])
-
-  // Wheel + trackpad horizontal
-  useEffect(() => {
-    const el = sectionRef.current
-    if (!el) return
-    const onWheel = (e: WheelEvent) => {
-      if (wheelCooldown.current) return
-      const absX = Math.abs(e.deltaX), absY = Math.abs(e.deltaY)
-      const isH = absX > absY && absX > 15
-      const isV = absY > absX && absY > 25
-      if (!isH && !isV) return
-      e.preventDefault()
-      wheelCooldown.current = true
-      setTimeout(() => { wheelCooldown.current = false }, 750)
-      const forward = isH ? e.deltaX > 0 : e.deltaY > 0
-      forward ? goNextRef.current() : goPrevRef.current()
-    }
-    el.addEventListener('wheel', onWheel, { passive: false })
-    return () => el.removeEventListener('wheel', onWheel)
-  }, [])
-
-  // Cursor parallax — CSS transition handles smoothness, no RAF needed
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
-    const el = sectionRef.current
-    if (!el) return
-    const r = el.getBoundingClientRect()
-    const x = ((e.clientX - r.left)  / r.width  - 0.5) * 20
-    const y = ((e.clientY - r.top)   / r.height - 0.5) * 12
-    const tf = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(1.06)`
-    parallaxRefs.current.forEach(div => { if (div) div.style.transform = tf })
-  }, [])
-
-  const handleMouseLeave = useCallback(() => {
-    parallaxRefs.current.forEach(div => {
-      if (div) div.style.transform = 'translate3d(0px,0px,0) scale(1.06)'
+    slides.forEach((s, i) => {
+      preloadImage(s.image).then(() => {
+        setImagesReady(r => {
+          const next = [...r]
+          next[i] = true
+          return next
+        })
+        if (i === 0) {
+          setSkeletonOut(true)
+          setTimeout(() => setSkeletonGone(true), 750)
+        }
+      })
     })
   }, [])
 
+  // Auto-advance — start timer on mount; goTo resets it on every navigation
+  useEffect(() => {
+    resetTimer()
+    return () => { if (timerRef.current !== null) clearInterval(timerRef.current) }
+  }, [resetTimer])
+
+  // Wheel / trackpad navigation intentionally removed.
+
   // Touch/pointer swipe
   const handlePointerDown = (e: React.PointerEvent) => { touchX.current = e.clientX }
-  const handlePointerUp   = (e: React.PointerEvent) => {
+  const handlePointerUp = (e: React.PointerEvent) => {
     if (touchX.current === null) return
     const delta = e.clientX - touchX.current
     touchX.current = null
@@ -147,33 +206,19 @@ export function HeroSlider() {
       aria-label="Hero — GrafiVisión"
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
     >
       {/* ── Background slides ───────────────────────────────────── */}
-      {/* bg-black: insurance — any gap in clip-path shows dark, not the page background */}
+      {/*
+        ARCHITECTURE: All 4 slide containers stay permanently mounted (no unmounting).
+        The animation wrapper div (animDivRefs) never changes key — its animation is
+        restarted imperatively via useEffect above. This eliminates the unmount/remount
+        flash that caused the bg-black to show through for one browser frame.
+      */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden bg-black">
         {slides.map((s, i) => {
-          const isActive  = i === current
+          const isActive = i === current
           const isExiting = i === prev
-          const isIdle    = !isActive && !isExiting
-
-          let divKey: string
-          let anim:   string | undefined
-
-          if (isActive) {
-            divKey = `enter-${i}-${enterCounts[i]}`
-            // No brush-in on very first render (nothing behind to reveal over)
-            anim = isFirstRender.current
-              ? undefined
-              : `enter-${direction} ${ENTER_MS}ms cubic-bezier(0.4,0,0.2,1) both`
-          } else if (isExiting) {
-            divKey = `exit-${i}-${exitCounts[i]}`
-            anim   = `exit-slide ${EXIT_MS}ms ease-in both`
-          } else {
-            divKey = `idle-${i}`
-            anim   = undefined
-          }
+          const isIdle = !isActive && !isExiting
 
           return (
             <div
@@ -181,40 +226,29 @@ export function HeroSlider() {
               aria-hidden="true"
               className="absolute inset-0"
               style={{
-                zIndex:  isActive ? 2 : isExiting ? 1 : 0,
-                // Idle slides fully hidden — never visible through clip-path gaps
-                opacity: isIdle ? 0 : undefined,
+                zIndex: isActive ? 2 : isExiting ? 1 : 0,
+                // Idle slides fully hidden. Active slide hidden until image confirmed
+                // loaded — prevents bg-black showing through on slow connections.
+                opacity: (isIdle || (isActive && !imagesReady[i])) ? 0 : undefined,
               }}
             >
-              {/* Brush-in / fade-out wrapper */}
+              {/* Animation wrapper — ref-controlled, never unmounted, never re-keyed */}
               <div
-                key={divKey}
+                ref={el => { animDivRefs.current[i] = el }}
                 className="absolute inset-0"
-                style={anim ? { animation: anim, willChange: 'clip-path' } : undefined}
               >
-                {/* Parallax container — CSS transition for smooth mouse follow */}
-                <div
-                  ref={el => { parallaxRefs.current[i] = el }}
-                  className="absolute inset-0"
-                  style={{
-                    transform:  'scale(1.06)',
-                    transition: 'transform 1.4s cubic-bezier(0.25,0.46,0.45,0.94)',
-                    willChange: 'transform',
-                  }}
-                >
-                  <img
-                    src={s.image}
-                    alt=""
-                    width="1440"
-                    height="900"
-                    className="h-full w-full object-cover"
-                    loading="eager"
-                    fetchPriority={i === 0 ? 'high' : 'auto'}
-                    decoding={i === 0 ? 'sync' : 'async'}
-                  />
-                </div>
+                <img
+                  src={s.image}
+                  alt=""
+                  width="1440"
+                  height="900"
+                  className="h-full w-full object-cover object-top"
+                  loading="eager"
+                  fetchPriority={i === 0 ? 'high' : 'auto'}
+                  decoding={i === 0 ? 'sync' : 'async'}
+                />
 
-                {/* Overlay */}
+                {/* Overlays */}
                 <div className="absolute inset-0 bg-black/38" />
                 <div className="absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent" />
               </div>
@@ -337,6 +371,56 @@ export function HeroSlider() {
         decoding="sync"
         className="pointer-events-none select-none absolute bottom-0 left-28 md:left-32 xl:left-44 2xl:left-52 z-20 w-60 xl:w-80"
       />
+
+      {/* ── Loading skeleton ─────────────────────────────────────────
+          Shows while slide 0 image is downloading + decoding.
+          Fades out (skeletonOut) then unmounts (skeletonGone).
+          Dark bg with red-tinted shimmer sweep matching brand palette. */}
+      {!skeletonGone && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center overflow-hidden bg-[#111]"
+          style={{
+            opacity: skeletonOut ? 0 : 1,
+            transition: 'opacity 600ms cubic-bezier(0.4,0,0.2,1)',
+          }}
+        >
+          {/* Shimmer sweep */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(90deg,transparent 0%,rgba(232,34,43,0.06) 30%,rgba(255,150,150,0.11) 50%,rgba(232,34,43,0.06) 70%,transparent 100%)',
+              animation: 'sk-glint 2.4s ease-in-out infinite',
+            }}
+          />
+
+          {/* Content placeholders — mirrors real hero layout */}
+          <div className="relative flex flex-col items-center gap-5 w-full max-w-xl px-8">
+            {/* Tag badge */}
+            <div className="h-2.5 w-28 rounded-full bg-white/7" />
+            {/* Divider */}
+            <div className="h-px w-12 bg-white/6" />
+            {/* Big word title */}
+            <div className="h-16 w-56 rounded-2xl bg-white/8 xl:h-24 xl:w-72" />
+            {/* Subtitle line 1 */}
+            <div className="h-3 w-64 rounded-full bg-white/6" />
+            {/* Subtitle line 2 */}
+            <div className="h-3 w-48 rounded-full bg-white/5" />
+          </div>
+
+          {/* Bottom nav dots (mirrors actual dot bar) */}
+          <div className="absolute bottom-8 right-6 xl:right-10 flex items-center gap-3">
+            <div className="h-1.5 w-8 rounded-full bg-white/8" />
+            <div className="h-1.5 w-3 rounded-full bg-white/6" />
+            <div className="h-1.5 w-3 rounded-full bg-white/6" />
+            <div className="h-1.5 w-3 rounded-full bg-white/6" />
+          </div>
+
+          {/* Top progress bar placeholder */}
+          <div className="absolute top-0 left-0 h-0.5 w-full bg-brand-red/15" />
+        </div>
+      )}
     </section>
   )
 }

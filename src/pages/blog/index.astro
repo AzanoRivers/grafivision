@@ -1,10 +1,10 @@
 ---
-import { getCollection } from 'astro:content'
 import Img from '@/components/atoms/Img.astro'
-import PageLayout from '@/layouts/PageLayout.astro'
 import PageHero from '@/components/organisms/PageHero.astro'
-import Reveal from '@/components/transitions/Reveal.astro'
 import SubscribeBar from '@/components/organisms/SubscribeBar.astro'
+import Reveal from '@/components/transitions/Reveal.astro'
+import PageLayout from '@/layouts/PageLayout.astro'
+import { getCollection } from 'astro:content'
 
 const categoryLabels: Record<string, string> = {
   diseno:     'Diseño',
@@ -35,14 +35,14 @@ function formatDate(date: Date): string {
 <PageLayout
   title="Blog"
   description="Artículos sobre diseño gráfico, branding, packaging y comunicación visual para empresas colombianas que quieren destacar."
-  preloadImage="/images/brand/GF-2.webp"
+  preloadImage="/images/banner/vertical_banner.png"
 >
 
   <PageHero
     badge="Blog"
     title="Ideas, recursos y reflexiones"
     subtitle="Compartimos lo que sabemos sobre diseño gráfico, branding y comunicación visual."
-    image="/images/brand/GF-2.webp"
+    image="/images/banner/vertical_banner.png"
   />
 
   <!-- ── Filter + Grid ──────────────────────────────────── -->

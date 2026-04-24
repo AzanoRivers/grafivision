@@ -1,22 +1,22 @@
 ---
-import PageLayout from '@/layouts/PageLayout.astro'
-import PageHero from '@/components/organisms/PageHero.astro'
-import { PortfolioFilter } from '@/components/islands/PortfolioFilter'
-import CtaBanner from '@/components/organisms/CtaBanner.astro'
-import SubscribeBar from '@/components/organisms/SubscribeBar.astro'
-import { portfolioItems } from '@/lib/data/portfolio'
+import { PortfolioFilter } from "@/components/islands/PortfolioFilter";
+import CtaBanner from "@/components/organisms/CtaBanner.astro";
+import PageHero from "@/components/organisms/PageHero.astro";
+import SubscribeBar from "@/components/organisms/SubscribeBar.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { portfolioItems } from "@/lib/data/portfolio";
 ---
 
 <PageLayout
   title="Portafolio"
   description="Portafolio de trabajos en impresión offset, digital, gran formato, material POP y empaques. Producción gráfica de alta calidad en Bogotá."
-  preloadImage="/images/brand/GF-2.webp"
+  preloadImage="/images/banner/vertical_banner.png"
 >
   <PageHero
     badge="Nuestro trabajo"
     title="Portafolio de proyectos"
     subtitle="Más de 350 proyectos completados. Una selección de trabajos en offset, digital, gran formato, material POP y empaques."
-    image="/images/brand/GF-2.webp"
+    image="/images/banner/vertical_banner.png"
   />
 
   <section class="bg-surface-base">
