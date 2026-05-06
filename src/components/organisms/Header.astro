@@ -8,7 +8,7 @@ import { navItems } from '@/lib/data/nav'
 
 <header
   id="site-header"
-  class="sticky top-0 z-9999 w-full border-b border-surface-border bg-surface-raised/90 backdrop-blur-md"
+  class="sticky top-0 z-[9999] w-full border-b border-surface-border bg-surface-raised/90 backdrop-blur-md transition-shadow duration-300"
 >
   <div class="container-content section-padding">
     <div class="flex h-16 items-center justify-between xl:h-20">
@@ -84,3 +84,21 @@ import { navItems } from '@/lib/data/nav'
     </div>
   </div>
 </header>
+
+<script is:inline>
+  ;(function () {
+    var header = document.getElementById('site-header')
+    if (!header) return
+    function update() {
+      if (window.scrollY > 8) {
+        header.classList.add('shadow-md')
+        header.classList.remove('shadow-none')
+      } else {
+        header.classList.remove('shadow-md')
+        header.classList.add('shadow-none')
+      }
+    }
+    window.addEventListener('scroll', update, { passive: true })
+    update()
+  })()
+</script>

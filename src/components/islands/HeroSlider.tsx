@@ -17,13 +17,16 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 
 interface Slide {
   image: string
+  mobileImage?: string
 }
 
+const MOBILE_BASE = '/images/banner/Nuevos%2006052026/mobile'
+
 const slides: Slide[] = [
-  { image: '/images/banner/banner-1-ia-no-redes.png' },
-  { image: '/images/banner/banner-2-empaques.png' },
-  { image: '/images/banner/banner-3-impresiones.png' },
-  { image: '/images/banner/banner-4-material-pop.png' },
+  { image: '/images/banner/banner-1-ia-no-redes.png', mobileImage: `${MOBILE_BASE}/banner-home-1.png` },
+  { image: '/images/banner/banner-2-empaques.png',    mobileImage: `${MOBILE_BASE}/banner-home-2.png` },
+  { image: '/images/banner/banner-3-impresiones.png', mobileImage: `${MOBILE_BASE}/banner-home-3.png` },
+  { image: '/images/banner/banner-4-material-pop.png', mobileImage: `${MOBILE_BASE}/banner-home-4.png` },
 ]
 
 const INTERVAL = 5800
@@ -95,7 +98,9 @@ export function HeroSlider() {
 
   // ── Navigation ────────────────────────────────────────────────────
   const goTo = useCallback((index: number, dir: 'ltr' | 'rtl' = 'ltr') => {
-    preloadImage(slides[index].image).then(() => {
+    const s = slides[index]
+    const toLoad = s.mobileImage ? [s.image, s.mobileImage] : [s.image]
+    Promise.all(toLoad.map(preloadImage)).then(() => {
       setImagesReady(r => r.map((v, i) => i === index ? true : v))
       isFirstRender.current = false
       const leaving = currentRef.current
@@ -130,7 +135,8 @@ export function HeroSlider() {
 
   useEffect(() => {
     slides.forEach((s, i) => {
-      preloadImage(s.image).then(() => {
+      const toLoad = s.mobileImage ? [s.image, s.mobileImage] : [s.image]
+      Promise.all(toLoad.map(preloadImage)).then(() => {
         setImagesReady(r => {
           const next = [...r]
           next[i] = true
@@ -195,11 +201,23 @@ export function HeroSlider() {
                   alt=""
                   width="1440"
                   height="900"
-                  className="h-full w-full object-cover object-top"
+                  className="hidden xl:block h-full w-full object-cover object-top"
                   loading="eager"
                   fetchPriority={i === 0 ? 'high' : 'auto'}
                   decoding={i === 0 ? 'sync' : 'async'}
                 />
+                {s.mobileImage && (
+                  <img
+                    src={s.mobileImage}
+                    alt=""
+                    width="750"
+                    height="1334"
+                    className="block xl:hidden h-full w-full object-cover object-center"
+                    loading="eager"
+                    fetchPriority={i === 0 ? 'high' : 'auto'}
+                    decoding={i === 0 ? 'sync' : 'async'}
+                  />
+                )}
               </div>
             </div>
           )
