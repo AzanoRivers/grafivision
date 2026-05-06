@@ -333,3 +333,9 @@ build.log
 *.mono/
 **/*.translation
 **/*.mono/
+
+# CLAUDE
+.claude/settings.local.json
+**/.claude/settings.local.json
+.claude/settings.json
+**/.claude/settings.json
