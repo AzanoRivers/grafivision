@@ -48,7 +48,7 @@ export const teamMembers: TeamMember[] = [
     name: 'GrafiVisión',
     role: 'Coordinador de Proyectos',
     bio: 'Garantiza que cada entrega sea puntual, precisa y alineada con los objetivos estratégicos del cliente.',
-    photo: '/images/banner/vertical_banner.png',
+    photo: '/images/banner/m-banner-1.png',
     social: {
       linkedin: 'https://linkedin.com/company/grafivision',
     },

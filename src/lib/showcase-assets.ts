@@ -7,8 +7,8 @@ export const SHOWCASE_IMAGES = {
     '/images/banner/banner-2-empaques.png',
     '/images/banner/banner-3-impresiones.png',
   ],
-  parallax: ['/images/banner/banner-4-material-pop.png', '/images/banner/vertical_banner.png'],
-  hero: '/images/banner/vertical_banner.png',
+  parallax: ['/images/banner/banner-4-material-pop.png', '/images/banner/m-banner-1.png'],
+  hero: '/images/banner/m-banner-1.png',
 }
 
 export const SHOWCASE_VIDEOS = {
