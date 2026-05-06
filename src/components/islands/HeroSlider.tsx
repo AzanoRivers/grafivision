@@ -17,41 +17,21 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 
 interface Slide {
   image: string
-  word: string
-  tag: string
-  desc: string
 }
 
 const slides: Slide[] = [
-  {
-    image: '/images/banner/banner_1.png',
-    word: 'GrafiVisión',
-    tag: 'Más de 33 años en artes gráficas',
-    desc: 'Soluciones integrales en impresión y producción publicitaria en Bogotá.',
-  },
-  {
-    image: '/images/banner/banner_2.png',
-    word: 'Empaques',
-    tag: 'Diseño y producción de empaques',
-    desc: 'Cajas, estuches y packaging con acabados de lujo para tu marca.',
-  },
-  {
-    image: '/images/banner/banner_3.png',
-    word: 'Offset',
-    tag: 'Impresión Offset & Digital',
-    desc: 'Alta definición y fidelidad de color en tirajes cortos y grandes volúmenes.',
-  },
-  {
-    image: '/images/banner/banner_4.png',
-    word: 'Formato',
-    tag: 'Gran Formato & Material POP',
-    desc: 'Pendones, vinilos, exhibidores y piezas de alto impacto visual.',
-  },
+  { image: '/images/banner/banner-1-ia-no-redes.png' },
+  { image: '/images/banner/banner-2-empaques.png' },
+  { image: '/images/banner/banner-3-impresiones.png' },
+  { image: '/images/banner/banner-4-material-pop.png' },
 ]
 
 const INTERVAL = 5800
 const ENTER_MS = 750
 const CLEAR_MS = ENTER_MS + 200
+
+const RAINBOW = 'linear-gradient(90deg, #E8222B 0%, #FF6B35 16%, #FFD700 33%, #22C55E 50%, #3B82F6 66%, #8B5CF6 83%, #EC4899 100%)'
+const SECTION_BG = 'linear-gradient(135deg, #fff5f5 0%, #fff9f0 25%, #f0fff4 50%, #f0f0ff 75%, #fff5fb 100%)'
 
 // Module-level image cache — persists across re-renders
 const imageCache = new Set<string>()
@@ -65,7 +45,7 @@ async function preloadImage(src: string): Promise<void> {
   const img = new window.Image()
   img.src = src
   try {
-    await img.decode() // download + decode — browser can paint instantly after this
+    await img.decode()
   } catch {
     // decode() can reject for SVGs or unsupported formats — never block on error
   }
@@ -79,11 +59,9 @@ export function HeroSlider() {
   const [prev, setPrev] = useState<number | null>(null)
   const [animKey, setAnimKey] = useState(0)
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr')
-  // Tracks confirmed-loaded slides — prevents bg-black showing on unloaded images
   const [imagesReady, setImagesReady] = useState<boolean[]>(() =>
-    slides.map(() => false) // all start false; slide 0 becomes true after decode
+    slides.map(() => false)
   )
-  // Skeleton states: skeletonOut triggers fade, skeletonGone unmounts after fade
   const [skeletonOut, setSkeletonOut] = useState(false)
   const [skeletonGone, setSkeletonGone] = useState(false)
 
@@ -92,13 +70,10 @@ export function HeroSlider() {
   const sectionRef = useRef<HTMLElement>(null)
 
   const isFirstRender = useRef(true)
-  // Animation wrapper divs — restarted imperatively, never unmounted
   const animDivRefs = useRef<(HTMLDivElement | null)[]>(slides.map(() => null))
-  // Always-fresh current index — avoids stale closures in async/timer callbacks
   const currentRef = useRef(0)
   useEffect(() => { currentRef.current = current }, [current])
 
-  // Interval ref — lets any navigation call reset the timer
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const resetTimer = useCallback(() => {
     if (timerRef.current !== null) clearInterval(timerRef.current)
@@ -106,17 +81,12 @@ export function HeroSlider() {
   }, [])
 
   // ── Imperative animation restart (useLayoutEffect) ──────────────────────
-  // MUST be useLayoutEffect, not useEffect.
-  // useEffect fires AFTER the browser paints — the new slide would be visible
-  // for one frame without clip-path (full image flash) before the animation starts.
-  // useLayoutEffect fires synchronously after DOM mutations and BEFORE paint,
-  // so the clip-path is already set when the browser renders the first frame.
   useLayoutEffect(() => {
     if (isFirstRender.current) return
     const div = animDivRefs.current[current]
     if (!div) return
     div.style.animation = 'none'
-    void div.offsetWidth // force reflow — resets animation state in the GPU
+    void div.offsetWidth
     div.style.animation = `enter-${direction} ${ENTER_MS}ms cubic-bezier(0.4,0,0.2,1) both`
     div.style.willChange = 'clip-path'
     const cleanup = setTimeout(() => { if (div) div.style.willChange = 'auto' }, ENTER_MS + 50)
@@ -125,16 +95,15 @@ export function HeroSlider() {
 
   // ── Navigation ────────────────────────────────────────────────────
   const goTo = useCallback((index: number, dir: 'ltr' | 'rtl' = 'ltr') => {
-    // Block until image confirmed loaded — prevents bg-black showing
     preloadImage(slides[index].image).then(() => {
       setImagesReady(r => r.map((v, i) => i === index ? true : v))
       isFirstRender.current = false
-      const leaving = currentRef.current // always fresh — no stale closure
+      const leaving = currentRef.current
       setDirection(dir)
       setPrev(leaving)
       setCurrent(index)
       setAnimKey(k => k + 1)
-      resetTimer() // reset interval so next auto-advance is always INTERVAL ms away
+      resetTimer()
     })
   }, [resetTimer])
 
@@ -148,20 +117,17 @@ export function HeroSlider() {
     goTo(idx, 'ltr')
   }, [goTo])
 
-  // Stable handler refs for effects that must not re-subscribe on every render
   const goNextRef = useRef(goNext)
   const goPrevRef = useRef(goPrev)
   useEffect(() => { goNextRef.current = goNext }, [goNext])
   useEffect(() => { goPrevRef.current = goPrev }, [goPrev])
 
-  // Clear exiting slide after brush animation completes
   useEffect(() => {
     if (prev === null) return
     const t = setTimeout(() => setPrev(null), CLEAR_MS)
     return () => clearTimeout(t)
   }, [prev])
 
-  // Eager preload all images on mount
   useEffect(() => {
     slides.forEach((s, i) => {
       preloadImage(s.image).then(() => {
@@ -178,13 +144,10 @@ export function HeroSlider() {
     })
   }, [])
 
-  // Auto-advance — start timer on mount; goTo resets it on every navigation
   useEffect(() => {
     resetTimer()
     return () => { if (timerRef.current !== null) clearInterval(timerRef.current) }
   }, [resetTimer])
-
-  // Wheel / trackpad navigation intentionally removed.
 
   // Touch/pointer swipe
   const handlePointerDown = (e: React.PointerEvent) => { touchX.current = e.clientX }
@@ -196,25 +159,18 @@ export function HeroSlider() {
     delta < 0 ? goNext() : goPrev()
   }
 
-  const slide = slides[current]
-
   return (
     <section
       ref={sectionRef}
       data-glow-exclude
-      className="group relative flex min-h-[calc(100dvh-4rem)] xl:min-h-[calc(100dvh-5rem)] items-center justify-center"
+      className="group relative flex min-h-[calc(100dvh-4rem)] xl:min-h-[calc(100dvh-5rem)] items-center justify-center overflow-hidden"
       aria-label="Hero — GrafiVisión"
+      style={{ background: SECTION_BG }}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
     >
       {/* ── Background slides ───────────────────────────────────── */}
-      {/*
-        ARCHITECTURE: All 4 slide containers stay permanently mounted (no unmounting).
-        The animation wrapper div (animDivRefs) never changes key — its animation is
-        restarted imperatively via useEffect above. This eliminates the unmount/remount
-        flash that caused the bg-black to show through for one browser frame.
-      */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden bg-black">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {slides.map((s, i) => {
           const isActive = i === current
           const isExiting = i === prev
@@ -227,12 +183,9 @@ export function HeroSlider() {
               className="absolute inset-0"
               style={{
                 zIndex: isActive ? 2 : isExiting ? 1 : 0,
-                // Idle slides fully hidden. Active slide hidden until image confirmed
-                // loaded — prevents bg-black showing through on slow connections.
                 opacity: (isIdle || (isActive && !imagesReady[i])) ? 0 : undefined,
               }}
             >
-              {/* Animation wrapper — ref-controlled, never unmounted, never re-keyed */}
               <div
                 ref={el => { animDivRefs.current[i] = el }}
                 className="absolute inset-0"
@@ -247,22 +200,32 @@ export function HeroSlider() {
                   fetchPriority={i === 0 ? 'high' : 'auto'}
                   decoding={i === 0 ? 'sync' : 'async'}
                 />
-
-                {/* Overlays */}
-                <div className="absolute inset-0 bg-black/38" />
-                <div className="absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent" />
               </div>
             </div>
           )
         })}
       </div>
 
+      {/* ── White fade at bottom — contrast for controls ─────────── */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 left-0 right-0 z-[3] h-40"
+        style={{ background: 'linear-gradient(to top, rgba(255,255,255,0.93) 0%, rgba(255,255,255,0.0) 100%)' }}
+      />
+
+      {/* ── Rainbow accent strip ──────────────────────────────────── */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 left-0 right-0 z-[5] h-[3px]"
+        style={{ background: RAINBOW }}
+      />
+
       {/* ── Arrow: Previous ─────────────────────────────────────── */}
       <button
         type="button"
         aria-label="Diapositiva anterior"
         onClick={goPrev}
-        className="absolute left-4 top-1/2 z-10 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white backdrop-blur-sm transition-all duration-300 opacity-0 group-hover:opacity-100 hover:border-white/70 hover:bg-black/45 active:scale-90 xl:left-8 xl:h-14 xl:w-14"
+        className="absolute left-4 top-1/2 z-10 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-md transition-all duration-300 hover:border-brand-red hover:text-brand-red hover:shadow-lg active:scale-90 xl:left-8 xl:h-14 xl:w-14"
       >
         <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -274,63 +237,18 @@ export function HeroSlider() {
         type="button"
         aria-label="Siguiente diapositiva"
         onClick={goNext}
-        className="absolute right-4 top-1/2 z-10 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white backdrop-blur-sm transition-all duration-300 opacity-0 group-hover:opacity-100 hover:border-white/70 hover:bg-black/45 active:scale-90 xl:right-8 xl:h-14 xl:w-14"
+        className="absolute right-4 top-1/2 z-10 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-md transition-all duration-300 hover:border-brand-red hover:text-brand-red hover:shadow-lg active:scale-90 xl:right-8 xl:h-14 xl:w-14"
       >
         <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
         </svg>
       </button>
 
-      {/* ── Text content ────────────────────────────────────────── */}
-      <div
-        key={animKey}
-        className="container-content section-padding relative z-10 flex flex-col items-center py-32 text-center"
-      >
-        <p
-          className="animate-hero-cta mb-5 text-xs font-semibold uppercase tracking-[0.1em] xl:tracking-[0.25em] text-white/85 max-w-xs xl:max-w-none"
-          style={{ textShadow: '0 1px 8px rgba(0,0,0,0.6)' }}
-        >
-          {slide.tag}
-        </p>
-        <div className="animate-hero-cta mb-6 h-px w-16 bg-white/40" aria-hidden="true" style={{ animationDelay: '0.1s' }} />
-        <h1
-          className="animate-hero-word font-display text-4xl lg:text-5xl xl:text-7xl 2xl:text-8xl font-bold leading-none tracking-tight text-white"
-          style={{ textShadow: '0 2px 20px rgba(0,0,0,0.55), 0 1px 6px rgba(0,0,0,0.4)' }}
-        >
-          {slide.word}
-        </h1>
-        <p
-          className="animate-hero-tag mt-4 text-base lg:text-lg font-medium text-white/90 xl:text-2xl max-w-sm xl:max-w-none"
-          style={{ textShadow: '0 1px 10px rgba(0,0,0,0.65)' }}
-        >
-          {slide.desc}
-        </p>
-      </div>
-
-      {/* ── Scroll indicator ─────────────────────────────────────── */}
-      <button
-        type="button"
-        aria-label="Ir a la siguiente sección"
-        onClick={() => window.scrollBy({ top: window.innerHeight * 0.92, behavior: 'smooth' })}
-        className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50 transition-opacity duration-300 hover:opacity-90"
-      >
-        <div className="relative h-9 w-px overflow-hidden" style={{ background: 'rgba(255,255,255,0.12)' }}>
-          <span
-            className="animate-scroll-drop absolute inset-x-0 h-4 rounded-full"
-            style={{ background: 'rgba(232,34,43,0.75)' }}
-            aria-hidden="true"
-          />
-        </div>
-        <svg width="9" height="5" viewBox="0 0 9 5" fill="none" stroke="rgba(232,34,43,0.8)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <path d="M1 1l3.5 3L8 1" />
-        </svg>
-      </button>
-
       {/* ── Bottom bar ───────────────────────────────────────────── */}
-      <div className="absolute bottom-8 left-0 z-10 w-full px-6 xl:px-10">
+      <div className="absolute bottom-5 left-0 z-10 w-full px-6 xl:px-10">
         <div className="flex items-center justify-between">
-          <span className="font-display text-xs font-semibold tabular-nums tracking-widest text-white/50 select-none">
-            {padTwo(current + 1)}&thinsp;<span className="text-white/25">/</span>&thinsp;{padTwo(slides.length)}
+          <span className="font-display text-xs font-semibold tabular-nums tracking-widest text-gray-500 select-none">
+            {padTwo(current + 1)}&thinsp;<span className="text-gray-300">/</span>&thinsp;{padTwo(slides.length)}
           </span>
           <div role="tablist" aria-label="Diapositivas" className="flex items-center gap-3">
             {slides.map((_, i) => (
@@ -343,8 +261,9 @@ export function HeroSlider() {
                 onClick={() => goTo(i, i > current ? 'ltr' : 'rtl')}
                 className={[
                   'h-1.5 rounded-full transition-all duration-500',
-                  i === current ? 'w-8 bg-white' : 'w-3 bg-white/40 hover:bg-white/70',
+                  i === current ? 'w-8' : 'w-3 bg-gray-400/50 hover:bg-gray-500/60',
                 ].join(' ')}
+                style={i === current ? { background: RAINBOW } : undefined}
               />
             ))}
           </div>
@@ -356,69 +275,129 @@ export function HeroSlider() {
       <div
         key={`p-${current}`}
         aria-hidden="true"
-        className="absolute top-0 left-0 z-10 h-0.5 w-full origin-left bg-brand-red/80"
-        style={{ animation: `slider-progress ${INTERVAL}ms linear both` }}
-      />
-
-      {/* ── Splash decorativo ─────────────────────────────────────── */}
-      <img
-        src="/images/splash.png"
-        alt=""
-        aria-hidden="true"
-        width="320"
-        height="320"
-        loading="eager"
-        decoding="sync"
-        className="pointer-events-none select-none absolute bottom-0 left-28 md:left-32 xl:left-44 2xl:left-52 z-20 w-60 xl:w-80"
+        className="absolute top-0 left-0 z-10 h-0.5 w-full origin-left"
+        style={{
+          background: RAINBOW,
+          animation: `slider-progress ${INTERVAL}ms linear both`,
+        }}
       />
 
       {/* ── Loading skeleton ─────────────────────────────────────────
-          Shows while slide 0 image is downloading + decoding.
-          Fades out (skeletonOut) then unmounts (skeletonGone).
-          Dark bg with red-tinted shimmer sweep matching brand palette. */}
+          Light theme to match the new rainbow/white background. */}
       {!skeletonGone && (
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center overflow-hidden bg-[#111]"
+          className="pointer-events-none absolute inset-0 z-30 overflow-hidden"
           style={{
+            background: SECTION_BG,
             opacity: skeletonOut ? 0 : 1,
             transition: 'opacity 600ms cubic-bezier(0.4,0,0.2,1)',
           }}
         >
-          {/* Shimmer sweep */}
+          {/* Rainbow shimmer sweep */}
           <div
             className="absolute inset-0"
             style={{
               background:
-                'linear-gradient(90deg,transparent 0%,rgba(232,34,43,0.06) 30%,rgba(255,150,150,0.11) 50%,rgba(232,34,43,0.06) 70%,transparent 100%)',
+                'linear-gradient(90deg,transparent 0%,rgba(232,34,43,0.05) 30%,rgba(139,92,246,0.08) 50%,rgba(59,130,246,0.05) 70%,transparent 100%)',
               animation: 'sk-glint 2.4s ease-in-out infinite',
             }}
           />
 
-          {/* Content placeholders — mirrors real hero layout */}
-          <div className="relative flex flex-col items-center gap-5 w-full max-w-xl px-8">
-            {/* Tag badge */}
-            <div className="h-2.5 w-28 rounded-full bg-white/7" />
-            {/* Divider */}
-            <div className="h-px w-12 bg-white/6" />
-            {/* Big word title */}
-            <div className="h-16 w-56 rounded-2xl bg-white/8 xl:h-24 xl:w-72" />
-            {/* Subtitle line 1 */}
-            <div className="h-3 w-64 rounded-full bg-white/6" />
-            {/* Subtitle line 2 */}
-            <div className="h-3 w-48 rounded-full bg-white/5" />
+          {/* ── Rainbow spinner ─────────────────────────────────────── */}
+          <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 1 }}>
+            <svg
+              width="88" height="88" viewBox="0 0 88 88"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+              style={{ animation: 'breathe-scale 3.2s ease-in-out infinite' }}
+            >
+              <defs>
+                {/* Outer arc: violet → magenta */}
+                <linearGradient id="sk-g1" x1="0" y1="0" x2="88" y2="88" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%"   stopColor="#8B5CF6" />
+                  <stop offset="65%"  stopColor="#EC4899" />
+                  <stop offset="100%" stopColor="#EC4899" stopOpacity="0" />
+                </linearGradient>
+                {/* Middle arc: red → orange → yellow */}
+                <linearGradient id="sk-g2" x1="88" y1="0" x2="0" y2="88" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%"   stopColor="#E8222B" />
+                  <stop offset="55%"  stopColor="#FF6B35" />
+                  <stop offset="100%" stopColor="#FFD700" stopOpacity="0" />
+                </linearGradient>
+                {/* Inner arc: blue → green */}
+                <linearGradient id="sk-g3" x1="0" y1="88" x2="88" y2="0" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%"   stopColor="#3B82F6" />
+                  <stop offset="65%"  stopColor="#22C55E" />
+                  <stop offset="100%" stopColor="#22C55E" stopOpacity="0" />
+                </linearGradient>
+                {/* Soft glow filter */}
+                <filter id="sk-glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="1.2" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+
+              {/* Track rings — barely visible guides */}
+              <circle cx="44" cy="44" r="38" stroke="rgba(0,0,0,0.05)" strokeWidth="1" />
+              <circle cx="44" cy="44" r="28" stroke="rgba(0,0,0,0.05)" strokeWidth="1" />
+              <circle cx="44" cy="44" r="18" stroke="rgba(0,0,0,0.05)" strokeWidth="1" />
+
+              {/* Outer arc — violet/magenta, slow CCW, 240° arc */}
+              <circle
+                cx="44" cy="44" r="38"
+                stroke="url(#sk-g1)"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeDasharray="160 79"
+                filter="url(#sk-glow)"
+                style={{ animation: 'spin 3s linear infinite reverse', transformOrigin: '44px 44px' }}
+              />
+
+              {/* Middle arc — red/orange/yellow, medium CW, 240° arc */}
+              <circle
+                cx="44" cy="44" r="28"
+                stroke="url(#sk-g2)"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeDasharray="118 58"
+                filter="url(#sk-glow)"
+                style={{ animation: 'spin 2s linear infinite', transformOrigin: '44px 44px' }}
+              />
+
+              {/* Inner arc — blue/green, fast CCW, 240° arc */}
+              <circle
+                cx="44" cy="44" r="18"
+                stroke="url(#sk-g3)"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeDasharray="75 38"
+                filter="url(#sk-glow)"
+                style={{ animation: 'spin 1.3s linear infinite reverse', transformOrigin: '44px 44px' }}
+              />
+
+              {/* Center dot — warm gradient */}
+              <circle cx="44" cy="44" r="4" fill="url(#sk-g2)" opacity="0.7" />
+            </svg>
           </div>
 
           {/* Bottom nav dots (mirrors actual dot bar) */}
-          <div className="absolute bottom-8 right-6 xl:right-10 flex items-center gap-3">
-            <div className="h-1.5 w-8 rounded-full bg-white/8" />
-            <div className="h-1.5 w-3 rounded-full bg-white/6" />
-            <div className="h-1.5 w-3 rounded-full bg-white/6" />
-            <div className="h-1.5 w-3 rounded-full bg-white/6" />
+          <div className="absolute bottom-5 right-6 xl:right-10 flex items-center gap-3">
+            <div className="h-1.5 w-8 rounded-full bg-gray-300/60" />
+            <div className="h-1.5 w-3 rounded-full bg-gray-300/40" />
+            <div className="h-1.5 w-3 rounded-full bg-gray-300/40" />
+            <div className="h-1.5 w-3 rounded-full bg-gray-300/40" />
           </div>
 
           {/* Top progress bar placeholder */}
-          <div className="absolute top-0 left-0 h-0.5 w-full bg-brand-red/15" />
+          <div className="absolute top-0 left-0 h-0.5 w-full" style={{ background: RAINBOW, opacity: 0.2 }} />
+
+          {/* Rainbow strip */}
+          <div className="absolute bottom-0 left-0 right-0 h-[3px]" style={{ background: RAINBOW }} />
         </div>
       )}
     </section>

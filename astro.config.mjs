@@ -4,6 +4,18 @@ import react from '@astrojs/react'
 import tailwindcss from '@tailwindcss/vite'
 import vercel from '@astrojs/vercel'
 
+/** @type {import('vite').Plugin} */
+const reactNodeEnv = {
+  name: 'react-node-env',
+  config(_, { mode }) {
+    return {
+      define: {
+        'process.env.NODE_ENV': JSON.stringify(mode),
+      },
+    }
+  },
+}
+
 export default defineConfig({
   output: 'server',
   site: 'https://grafivision.com.co',
@@ -17,12 +29,9 @@ export default defineConfig({
   },
 
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss(), reactNodeEnv],
     resolve: {
       dedupe: ['react', 'react-dom'],
-    },
-    define: {
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV ?? 'development'),
     },
   },
 

@@ -118,6 +118,7 @@ Web/
 ### Visual Language
 - **Light theme**: Site-wide white/light backgrounds (`bg-surface-raised` = #FFFFFF, `bg-surface-base` = #F8F8F8). Portfolio images have white backgrounds — they must blend naturally. NO dark section backgrounds unless explicitly justified (image overlays only).
 - **Bold minimalism**: Large typography, generous whitespace, red accent pops (`brand-red` = #E8222B)
+- **Rainbow accents**: Interactive elements (buttons, hovers) use warm gradients (red→orange) or full rainbow. Chameleon palette: `#E8222B → #FF6B35 → #FFD700 → #22C55E → #3B82F6 → #8B5CF6 → #EC4899`
 - **Image sections only**: `StatsSection`, `PageHero`, `HeroSlider` use hardcoded dark overlays (`bg-black/XX`) NOT `bg-surface-*` tokens — these are intentionally dark for image legibility
 - **Motion**: Subtle scroll-triggered animations (Intersection Observer), no jarring effects
 - **Grid discipline**: 12-col or 4-col grid. No random spacing values.
@@ -127,6 +128,8 @@ Web/
 - Dark overlays on images → use explicit `bg-black/XX` (e.g. `bg-black/72`), never surface tokens
 - Text on dark image sections → use explicit `text-white`, never `text-text-primary`
 - Brand accent always `text-brand-red` / `bg-brand-red` — unchanged
+- Interactive gradients: buttons use `bg-gradient-to-r from-brand-red to-brand-orange`; hover state shifts to `from-brand-orange to-brand-pink`
+- Rainbow line decorators: use `--gradient-rainbow` CSS var or the `bg-gradient-rainbow` utility
 - Red sections (`SubscribeBar`) → hardcoded `bg-brand-red`, child text always `text-white`
 - Never add dark mode CSS. Single light theme only.
 

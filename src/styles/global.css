@@ -39,7 +39,7 @@
   text-underline-offset: 3px;
 }
 .prose-blog a:hover {
-  color: var(--color-brand-red-dark);
+  color: var(--color-brand-orange);
 }
 .prose-blog ul,
 .prose-blog ol {
@@ -105,6 +105,29 @@
 
 @media (hover: none) {
   #cursor-trail { display: none; }
+}
+
+/* ── Gradient utilities (Tailwind v4 @utility) ─── */
+@utility bg-gradient-warm {
+  background: linear-gradient(135deg, #E8222B 0%, #FF6B35 100%);
+}
+@utility bg-gradient-rainbow {
+  background: linear-gradient(90deg, #E8222B 0%, #FF6B35 16%, #FFD700 33%, #22C55E 50%, #3B82F6 66%, #8B5CF6 83%, #EC4899 100%);
+}
+@utility bg-gradient-aurora {
+  background: linear-gradient(135deg, #FF6B35 0%, #8B5CF6 100%);
+}
+@utility text-gradient-warm {
+  background: linear-gradient(135deg, #E8222B 0%, #FF6B35 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+@utility text-gradient-rainbow {
+  background: linear-gradient(90deg, #E8222B 0%, #FF6B35 25%, #3B82F6 75%, #8B5CF6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 @layer base {

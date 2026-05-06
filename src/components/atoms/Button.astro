@@ -24,15 +24,15 @@ const base =
 
 const variants: Record<string, string> = {
   primary:
-    'bg-brand-red text-white rounded-lg hover:bg-brand-red-dark shadow-sm',
+    'bg-gradient-to-r from-brand-red to-brand-orange text-white rounded-lg shadow-md hover:from-brand-orange hover:to-brand-pink hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red transition-all duration-300',
   outline:
-    'border-2 border-brand-red text-brand-red rounded-lg hover:bg-brand-red hover:text-white',
+    'border-2 border-brand-red text-brand-red rounded-lg bg-transparent hover:bg-gradient-to-r hover:from-brand-red hover:to-brand-orange hover:text-white hover:border-transparent transition-all duration-300',
   ghost:
-    'text-text-primary rounded-lg hover:bg-surface-overlay',
+    'text-brand-red rounded-lg bg-transparent hover:bg-gradient-to-r hover:from-brand-red/10 hover:to-brand-orange/10 transition-all duration-300',
   dark:
     'bg-surface-overlay text-text-primary rounded-lg hover:bg-surface-muted',
   pill:
-    'bg-brand-red text-white rounded-pill hover:bg-brand-red-dark shadow-sm',
+    'bg-gradient-to-r from-brand-red to-brand-orange text-white rounded-pill shadow-md hover:from-brand-orange hover:to-brand-pink hover:shadow-lg transition-all duration-300',
 }
 
 const sizes: Record<string, string> = {

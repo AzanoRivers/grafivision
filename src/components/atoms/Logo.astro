@@ -25,30 +25,46 @@ const textSize = textSizes[size]
 
 <a
   href="/"
-  class:list={['inline-flex items-center gap-3 text-text-primary hover:text-brand-red transition-colors duration-200', className]}
+  class:list={['logo-link inline-flex items-center gap-3 transition-colors duration-300', className]}
   aria-label="GrafiVisión, ir al inicio"
 >
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 50 50"
+  <img
+    src="/logo-camaleon.png"
     width={markSize}
     height={markSize}
-    fill="currentColor"
+    alt=""
     aria-hidden="true"
-    class="shrink-0 text-brand-red"
-  >
-    <path d="M38.2,4c-1.4-1.1-38.3,8-19.9,44.6C-16.4,35.8,5.5-12.8,38.2,4" />
-    <path
-      d="M24.8,17.9c-12.5,10.2-5.7,31-5.4,31.5c1.1,0.3,2,0.6,3.7,0.6c2.3-23,20.4-31.8,20.4-31.8S34.7,17.9,24.8,17.9"
-    />
-    <path d="M49.2,23.6c1.1,14.5-11.4,26.1-24.7,26.1C24.5,49.7,31.3,29,49.2,23.6" />
-  </svg>
+    class="shrink-0 object-contain"
+    loading="eager"
+  />
 
   {
     variant === 'full' && (
-      <span class:list={['font-display font-bold tracking-tight text-inherit', textSize]}>
+      <span class:list={['logo-text font-display font-bold tracking-tight', textSize]}>
         GrafiVisión
       </span>
     )
   }
 </a>
+
+<style>
+  .logo-text {
+    color: var(--color-brand-red);
+    transition: color 0.25s ease, opacity 0.25s ease;
+  }
+
+  .logo-link:hover .logo-text {
+    background: linear-gradient(
+      90deg,
+      #e8222b 0%,
+      #ff6b35 22%,
+      #ffd700 44%,
+      #22c55e 58%,
+      #3b82f6 76%,
+      #8b5cf6 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+</style>

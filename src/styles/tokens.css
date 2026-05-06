@@ -76,10 +76,17 @@
   --radius-pill: 9999px;
 
   /* ─── Shadows ──────────────────────────────────────── */
+  /* ─── Brand Gradients ───────────────────────────── */
+  --gradient-warm:     linear-gradient(135deg, #E8222B 0%, #FF6B35 100%);
+  --gradient-rainbow:  linear-gradient(90deg, #E8222B 0%, #FF6B35 16%, #FFD700 33%, #22C55E 50%, #3B82F6 66%, #8B5CF6 83%, #EC4899 100%);
+  --gradient-aurora:   linear-gradient(135deg, #FF6B35 0%, #8B5CF6 100%);
+  --shadow-warm:       0 4px 24px rgba(232, 34, 43, 0.20), 0 2px 8px rgba(255, 107, 53, 0.15);
+  --shadow-rainbow:    0 4px 32px rgba(139, 92, 246, 0.18), 0 2px 8px rgba(232, 34, 43, 0.12);
+
   --shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.07);
   --shadow-md:  0 4px 12px rgba(0, 0, 0, 0.09);
   --shadow-lg:  0 8px 32px rgba(0, 0, 0, 0.12);
-  --shadow-red: 0 4px 24px rgba(232, 34, 43, 0.25);
+  --shadow-red: 0 4px 24px rgba(232, 34, 43, 0.22), 0 2px 12px rgba(255, 107, 53, 0.18);
 
   /* ─── Transitions & Easing ─────────────────────────── */
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);

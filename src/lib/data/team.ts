@@ -6,7 +6,7 @@ export const teamMembers: TeamMember[] = [
     name: 'GrafiVisión',
     role: 'Director Creativo',
     bio: 'Más de 33 años liderando proyectos de producción gráfica e impresión para empresas colombianas e internacionales.',
-    photo: '/images/banner/banner_1.png',
+    photo: '/images/banner/banner-1-ia-no-redes.png',
     social: {
       instagram: 'https://instagram.com/grafivision',
       behance: 'https://behance.net/grafivision',
@@ -17,7 +17,7 @@ export const teamMembers: TeamMember[] = [
     name: 'GrafiVisión Studio',
     role: 'Diseñadora Senior',
     bio: 'Especialista en branding y packaging con enfoque en consumo masivo y productos premium de exportación.',
-    photo: '/images/banner/banner_2.png',
+    photo: '/images/banner/banner-2-empaques.png',
     social: {
       instagram: 'https://instagram.com/grafivision',
       behance: 'https://behance.net/grafivision',
@@ -28,7 +28,7 @@ export const teamMembers: TeamMember[] = [
     name: 'GrafiVisión',
     role: 'Ilustrador & Motion',
     bio: 'Experto en ilustración digital y piezas de animación para campañas publicitarias y contenido de marca.',
-    photo: '/images/banner/banner_3.png',
+    photo: '/images/banner/banner-3-impresiones.png',
     social: {
       behance: 'https://behance.net/grafivision',
     },
@@ -38,7 +38,7 @@ export const teamMembers: TeamMember[] = [
     name: 'GrafiVisión Studio',
     role: 'Diseñadora Digital',
     bio: 'Especialista en piezas digitales, redes sociales y comunicación visual para plataformas online.',
-    photo: '/images/banner/banner_4.png',
+    photo: '/images/banner/banner-4-material-pop.png',
     social: {
       instagram: 'https://instagram.com/grafivision',
     },

@@ -26,12 +26,12 @@ const IconComponent = iconMap[icon] ?? Sparkles
   ]}
 >
   <!-- Icon -->
-  <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-red/10 text-brand-red transition-colors duration-300 group-hover:bg-brand-red group-hover:text-white">
+  <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-brand-red/10 to-brand-orange/10 text-brand-red transition-all duration-300 group-hover:from-brand-red group-hover:to-brand-orange group-hover:text-white">
     <IconComponent size={22} aria-hidden="true" />
   </div>
 
   <!-- Accent line -->
-  <div class="h-px w-8 bg-brand-red/40 transition-all duration-300 group-hover:w-full group-hover:bg-brand-red/60" aria-hidden="true" />
+  <div class="h-px w-8 bg-brand-red/40 transition-all duration-300 group-hover:w-full group-hover:bg-gradient-to-r group-hover:from-brand-red group-hover:to-brand-orange" aria-hidden="true" />
 
   <!-- Content -->
   <div class="flex flex-col gap-2">

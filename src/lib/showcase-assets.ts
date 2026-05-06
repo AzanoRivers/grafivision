@@ -3,11 +3,11 @@
 export const SHOWCASE_IMAGES = {
   portfolio: Array.from({ length: 20 }, (_, i) => `/images/portfolio/Foto-${i + 1}.webp`),
   brand: [
-    '/images/banner/banner_1.png',
-    '/images/banner/banner_2.png',
-    '/images/banner/banner_3.png',
+    '/images/banner/banner-1-ia-no-redes.png',
+    '/images/banner/banner-2-empaques.png',
+    '/images/banner/banner-3-impresiones.png',
   ],
-  parallax: ['/images/banner/banner_4.png', '/images/banner/vertical_banner.png'],
+  parallax: ['/images/banner/banner-4-material-pop.png', '/images/banner/vertical_banner.png'],
   hero: '/images/banner/vertical_banner.png',
 }
 

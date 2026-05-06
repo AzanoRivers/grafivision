@@ -1,6 +1,6 @@
 ---
 interface Props {
-  variant?: 'default' | 'red' | 'orange' | 'pink' | 'success' | 'muted'
+  variant?: 'default' | 'red' | 'orange' | 'pink' | 'success' | 'muted' | 'rainbow'
   size?: 'sm' | 'md'
   class?: string
 }
@@ -9,7 +9,8 @@ const { variant = 'default', size = 'sm', class: className } = Astro.props
 
 const variants: Record<string, string> = {
   default: 'bg-surface-overlay text-text-secondary border border-surface-border',
-  red:     'bg-brand-red/10 text-brand-red border border-brand-red/20',
+  red:     'bg-gradient-to-r from-brand-red/12 to-brand-orange/12 text-brand-red border border-brand-red/25',
+  rainbow: 'bg-gradient-to-r from-brand-red/10 via-[#8B5CF6]/10 to-[#3B82F6]/10 text-text-primary border border-[#8B5CF6]/20',
   orange:  'bg-brand-orange/10 text-brand-orange border border-brand-orange/20',
   pink:    'bg-brand-pink/10 text-brand-pink border border-brand-pink/20',
   success: 'bg-state-success/10 text-state-success border border-state-success/20',
