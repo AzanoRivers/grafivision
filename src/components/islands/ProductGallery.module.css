@@ -31,13 +31,13 @@
   color: rgba(232, 34, 43, 0.85);
 }
 .tabActive {
-  border-color: #E8222B;
-  background: #E8222B;
+  border-color: #e30513;
+  background: #e30513;
   color: #fff !important;
 }
 .tabActive:hover {
-  border-color: #c41a22;
-  background: #c41a22;
+  border-color: #b30010;
+  background: #b30010;
 }
 .tabCount {
   font-size: 0.7rem;

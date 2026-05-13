@@ -71,6 +71,8 @@ const {
 </section>
 
 <script>
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -78,7 +80,9 @@ const {
           const bars = entry.target.querySelectorAll<HTMLElement>('.skill-bar')
           bars.forEach((bar) => {
             const value = bar.dataset.value ?? '0'
-            bar.style.transition = 'width 1.2s cubic-bezier(0.4,0,0.2,1)'
+            if (!reducedMotion) {
+              bar.style.transition = 'width 1.2s cubic-bezier(0.4,0,0.2,1)'
+            }
             bar.style.width = `${value}%`
           })
           observer.unobserve(entry.target)

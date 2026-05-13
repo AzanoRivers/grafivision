@@ -7,9 +7,9 @@
   --breakpoint-2xl: 1200px;
 
   /* ─── Brand Colors ─────────────────────────────────── */
-  --color-brand-red:        #E8222B;
-  --color-brand-red-dark:   #B91C22;
-  --color-brand-red-light:  #FF4D54;
+  --color-brand-red:        #e30513;
+  --color-brand-red-dark:   #b30010;
+  --color-brand-red-light:  #ff3344;
   --color-brand-orange:     #FF6B2C;
   --color-brand-pink:       #FF2D6B;
 
@@ -48,6 +48,7 @@
   --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
   --font-body:    'Inter', system-ui, sans-serif;
   --font-hero:    'Pacifico', cursive;
+  --font-logo:    'Bodoni Moda', Georgia, serif;
 
   /* ─── Font Sizes ───────────────────────────────────── */
   --text-xs:   0.75rem;
@@ -77,10 +78,10 @@
 
   /* ─── Shadows ──────────────────────────────────────── */
   /* ─── Brand Gradients ───────────────────────────── */
-  --gradient-warm:     linear-gradient(135deg, #E8222B 0%, #FF6B35 100%);
-  --gradient-rainbow:  linear-gradient(90deg, #E8222B 0%, #FF6B35 16%, #FFD700 33%, #22C55E 50%, #3B82F6 66%, #8B5CF6 83%, #EC4899 100%);
+  --gradient-warm:     linear-gradient(135deg, #e30513 0%, #FF6B35 100%);
+  --gradient-rainbow:  linear-gradient(90deg, #e30513 0%, #FF6B35 16%, #FFD700 33%, #22C55E 50%, #3B82F6 66%, #8B5CF6 83%, #EC4899 100%);
   --gradient-aurora:   linear-gradient(135deg, #FF6B35 0%, #8B5CF6 100%);
-  --shadow-warm:       0 4px 24px rgba(232, 34, 43, 0.20), 0 2px 8px rgba(255, 107, 53, 0.15);
+  --shadow-warm:       0 4px 24px rgba(227, 5, 19, 0.20), 0 2px 8px rgba(255, 107, 53, 0.15);
   --shadow-rainbow:    0 4px 32px rgba(139, 92, 246, 0.18), 0 2px 8px rgba(232, 34, 43, 0.12);
 
   --shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.07);

@@ -45,7 +45,7 @@ export function ContactForm() {
   }
 
   const inputClass =
-    'w-full rounded-lg border px-4 py-2.5 text-sm bg-transparent text-text-primary placeholder-text-muted outline-none transition-colors focus:border-brand-red'
+    'w-full rounded-lg border px-4 py-2.5 text-base bg-transparent text-text-primary placeholder-text-muted outline-none transition-colors focus:border-brand-red'
   const errorClass = 'mt-1 text-xs text-state-error'
 
   const borderStyle = (hasError: boolean) => ({

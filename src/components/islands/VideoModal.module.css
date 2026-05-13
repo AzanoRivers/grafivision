@@ -1,0 +1,374 @@
+/* ═══════════════════════════════════════════════════════════
+   VideoModal — full-screen video player modal
+   Dark backdrop · Brand-red accents · iOS-safe · Grafivision
+
+   iOS critical rules applied:
+   - playsInline on <video> (handled in TSX)
+   - overscroll-behavior: contain prevents rubber-band scroll leak
+   - touch-action: none on overlay prevents scroll interference
+   - env(safe-area-inset-*) for notch-aware close button
+   - 100svh (small viewport) for mobile browser chrome
+   - contain: layout style paint isolates compositing context
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Overlay ──────────────────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overscroll-behavior: contain;
+  touch-action: none;
+  contain: layout style paint;
+  animation: modalOpen 240ms cubic-bezier(0.2, 0, 0.2, 1) both;
+}
+.overlayClosing {
+  animation: modalClose 220ms cubic-bezier(0.4, 0, 1, 1) both;
+  pointer-events: none;
+}
+@keyframes modalOpen {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes modalClose {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(8px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .overlay        { animation: none; }
+  .overlayClosing { animation: none; opacity: 0; }
+}
+
+/* ── Backdrop ─────────────────────────────────────────────── */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  isolation: isolate;
+}
+.backdropBase {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 6, 6, 0.97);
+}
+/* Subtle branded grid pattern — same as ProductLightbox */
+.backdropGrid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(227, 5, 19, 0.032) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(227, 5, 19, 0.032) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+}
+
+/* ── Click-outside-to-close catcher ──────────────────────── */
+.closeCatcher {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  cursor: pointer;
+}
+
+/* ── Close button ─────────────────────────────────────────── */
+.close {
+  position: absolute;
+  /* iOS notch-safe positioning */
+  top:   max(20px, env(safe-area-inset-top,   20px));
+  right: max(24px, env(safe-area-inset-right, 24px));
+  z-index: 10;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(227, 5, 19, 0.08);
+  border: 1px solid rgba(227, 5, 19, 0.28);
+  color: rgba(227, 5, 19, 0.65);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 200ms, border-color 200ms, color 200ms;
+  -webkit-tap-highlight-color: transparent;
+}
+.close:hover,
+.close:focus-visible {
+  background: rgba(227, 5, 19, 0.18);
+  border-color: rgba(227, 5, 19, 0.65);
+  color: rgba(227, 5, 19, 1);
+  outline: none;
+}
+
+/* ── Content column ───────────────────────────────────────── */
+.content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  /* Extra side room for nav arrows on desktop */
+  width: calc(min(900px, 100vw - 168px));
+  /* Top offset for close button, bottom for dots */
+  padding: 56px 0 8px;
+}
+
+/* ── Video area (wraps video + nav arrows) ────────────────── */
+.videoArea {
+  position: relative;
+  width: 100%;
+}
+
+/* ── Video wrapper ────────────────────────────────────────── */
+.videoWrap {
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(227, 5, 19, 0.18);
+  /* Prevent layout shift — max height accounts for header + label + dots */
+  max-height: calc(100svh - 180px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Placeholder dimensions while video metadata hasn't loaded yet.
+   Keeps the wrapper tall so the spinner is centred and the modal
+   doesn't collapse to zero height. 16/9 covers most video content. */
+.videoWrapLoading {
+  aspect-ratio: 16 / 9;
+}
+
+/* ── Loading spinner overlay ──────────────────────────────── */
+.videoLoader {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Semi-dark wash over the (black) video so spinner is clearly visible */
+  background: rgba(0, 0, 0, 0.48);
+  border-radius: inherit;
+  /* Delay fade-in 150ms — avoids flash on fast connections */
+  animation: loaderFadeIn 200ms ease 150ms both;
+  pointer-events: none;
+}
+@keyframes loaderFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.videoLoaderRing {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  /* Track: dim red arc; Active: vivid brand-red */
+  border: 3px solid rgba(227, 5, 19, 0.22);
+  border-top-color: rgba(227, 5, 19, 0.92);
+  animation: spinRing 780ms linear infinite;
+}
+@keyframes spinRing {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .videoLoaderRing {
+    animation: none;
+    /* Static arc — still communicates "loading" without motion */
+    border-top-color: rgba(227, 5, 19, 0.92);
+  }
+}
+
+/* ── Video element ────────────────────────────────────────── */
+.video {
+  display: block;
+  width: 100%;
+  /* Contain within wrapper height */
+  max-height: calc(100svh - 180px);
+  object-fit: contain;
+  background: #000;
+  border-radius: 12px;
+  /* iOS mandatory attributes handled in TSX (playsInline, controls) */
+}
+/* Hide native controls while buffering — video stays in DOM to keep loading.
+   opacity:0 + pointer-events:none = invisible but still downloading. */
+.videoHidden {
+  opacity: 0;
+  pointer-events: none;
+  animation: none;
+}
+/* Fade-in when new video loads after navigation */
+@keyframes videoFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.video {
+  animation: videoFadeIn 240ms ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .video { animation: none; }
+}
+
+/* ── Nav arrows ───────────────────────────────────────────── */
+.nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.60);
+  cursor: pointer;
+  transition:
+    background    200ms ease,
+    border-color  200ms ease,
+    color         200ms ease,
+    transform     200ms cubic-bezier(0.2, 0, 0, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+/* Desktop: arrows sit outside the video box */
+.navPrev { left:  -64px; }
+.navNext { right: -64px; }
+
+.nav:hover,
+.nav:focus-visible {
+  background: rgba(227, 5, 19, 0.14);
+  border-color: rgba(227, 5, 19, 0.45);
+  color: rgba(255, 255, 255, 0.92);
+  outline: none;
+}
+.navPrev:hover { transform: translateY(-50%) translateX(-2px); }
+.navNext:hover { transform: translateY(-50%) translateX(2px); }
+.nav:active    { transform: translateY(-50%) scale(0.93); }
+
+.navIcon {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+/* ── Video meta (label + counter) ────────────────────────── */
+.videoMeta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  text-align: center;
+}
+.videoLabel {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  margin: 0;
+}
+.videoCounter {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.26);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* ── Dot indicators ───────────────────────────────────────── */
+.dots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 7px;
+  z-index: 10;
+  max-width: 300px;
+}
+/* Each dot is a real <button> for a11y */
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(227, 5, 19, 0.22);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background 300ms, transform 300ms;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+/* Larger tap target (invisible) — important for mobile */
+.dot::before {
+  content: '';
+  position: absolute;
+  inset: -7px;
+}
+.dotActive {
+  background: rgba(227, 5, 19, 0.85);
+  transform: scale(1.45);
+  box-shadow: 0 0 6px rgba(227, 5, 19, 0.45);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════ */
+
+/* Tablet — content narrower, arrows move inside video */
+@media (max-width: 1060px) {
+  .content {
+    width: calc(100vw - 32px);
+    padding: 52px 0 8px;
+  }
+  /* Arrows overlay video edges */
+  .navPrev { left:  8px; }
+  .navNext { right: 8px; }
+  .nav {
+    width: 42px;
+    height: 42px;
+    background: rgba(0, 0, 0, 0.48);
+    border-color: rgba(255, 255, 255, 0.14);
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .content {
+    width: calc(100vw - 16px);
+    padding: 48px 0 6px;
+    gap: 12px;
+  }
+  .videoWrap {
+    border-radius: 8px;
+    max-height: calc(100svh - 160px);
+  }
+  .video {
+    max-height: calc(100svh - 160px);
+    border-radius: 8px;
+  }
+  .nav {
+    width: 36px;
+    height: 36px;
+  }
+  .navPrev { left:  4px; }
+  .navNext { right: 4px; }
+  .close {
+    top:   max(12px, env(safe-area-inset-top,   12px));
+    right: max(12px, env(safe-area-inset-right, 12px));
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
+  }
+}

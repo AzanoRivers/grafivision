@@ -21,26 +21,32 @@ const {
 
 <section
   class:list={[
-    "relative flex items-center overflow-hidden bg-black py-20 xl:py-28",
+    "relative flex items-center overflow-hidden bg-[#0e0002] py-20 xl:py-28",
     className,
   ]}
 >
-  <!-- Background image with dark overlay + parallax -->
+  <!-- Background image with warm-branded overlay + parallax -->
   <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
     <Img
       src={image}
       alt=""
       width={1440}
       height={400}
-      class="absolute w-full object-cover opacity-40 will-change-transform"
+      class="absolute w-full object-cover opacity-45 will-change-transform"
       style="top:-40%;height:180%"
       loading="eager"
       fetchpriority="high"
       data-parallax-img
       data-parallax-speed="0.45"
     />
+    <!-- Layer 1: main legibility gradient — warm crimson-dark, fades right -->
     <div
-      class="absolute inset-0 bg-linear-to-r from-black/85 via-black/55 to-transparent"
+      class="absolute inset-0 bg-linear-to-r from-[#0e0002]/92 via-[#0e0002]/58 to-[#0e0002]/12"
+    >
+    </div>
+    <!-- Layer 2: brand-red bottom warmth — bridges to light sections below -->
+    <div
+      class="absolute inset-0 bg-linear-to-t from-brand-red/18 via-brand-red/4 to-transparent"
     >
     </div>
   </div>

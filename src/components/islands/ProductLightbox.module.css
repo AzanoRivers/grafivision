@@ -19,12 +19,12 @@
   pointer-events: none;
 }
 @keyframes overlayOpen {
-  from { clip-path: inset(0 0 100% 0); opacity: 0.5; }
-  to   { clip-path: inset(0 0 0% 0);   opacity: 1; }
+  from { clip-path: inset(0 0 100% 0); -webkit-clip-path: inset(0 0 100% 0); opacity: 0.5; }
+  to   { clip-path: inset(0 0 0% 0);   -webkit-clip-path: inset(0 0 0% 0);   opacity: 1; }
 }
 @keyframes overlayClose {
-  from { clip-path: inset(0 0 0% 0);   opacity: 1; }
-  to   { clip-path: inset(0 0 100% 0); opacity: 0.5; }
+  from { clip-path: inset(0 0 0% 0);   -webkit-clip-path: inset(0 0 0% 0);   opacity: 1; }
+  to   { clip-path: inset(0 0 100% 0); -webkit-clip-path: inset(0 0 100% 0); opacity: 0.5; }
 }
 @media (prefers-reduced-motion: reduce) {
   .overlay, .overlayClosing { animation: none; }
@@ -134,7 +134,7 @@
   z-index: 1;
   background: #1a1a1a;
   overflow: hidden;
-  transition: opacity 500ms ease;
+  transition: opacity 200ms ease;
   pointer-events: none;
   border-radius: inherit;
 }

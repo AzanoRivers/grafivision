@@ -1,0 +1,250 @@
+/* ═══════════════════════════════════════════════════════════
+   VideoGallery — clickable video card grid with skeletons
+   Light theme · Brand-red accents · Grafivision
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Grid ─────────────────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+@media (min-width: 640px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1200px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ── Card entrance animation ──────────────────────────────── */
+@keyframes cardEnter {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.cardWrapper {
+  animation: cardEnter 480ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cardWrapper { animation: none; }
+}
+
+/* ── Card button ──────────────────────────────────────────── */
+.card {
+  display: block;
+  width: 100%;
+  border: none;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  outline: none;
+  text-align: left;
+  /* iOS tap highlight removal */
+  -webkit-tap-highlight-color: transparent;
+}
+.card:focus-visible .cardInner {
+  outline: 2px solid var(--color-brand-red, #e30513);
+  outline-offset: 3px;
+}
+
+/* ── Card inner (media container) ────────────────────────── */
+.cardInner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #e8e8e8;
+  /* Isolate stacking context — prevents z-index leakage */
+  isolation: isolate;
+  transition:
+    transform     280ms cubic-bezier(0.2, 0, 0, 1),
+    box-shadow    280ms ease,
+    border-color  280ms ease;
+}
+/* GPU layer only while hovering */
+.card:hover .cardInner,
+.card:focus-visible .cardInner {
+  transform: scale(1.032);
+  box-shadow:
+    0 14px 40px rgba(227, 5, 19, 0.16),
+    0 3px 10px rgba(0, 0, 0, 0.09);
+  border-color: rgba(227, 5, 19, 0.32);
+  will-change: transform;
+}
+/* Reset will-change when not hovering — avoids persistent GPU layer */
+.card .cardInner {
+  will-change: auto;
+}
+
+/* ── Thumbnail video element ──────────────────────────────── */
+.thumbnail {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  border-radius: inherit;
+  filter: brightness(0.94) saturate(0.88);
+  transition: filter 280ms ease, opacity 400ms ease;
+  opacity: 0; /* hidden until onSeeked fires */
+}
+.thumbnailReady {
+  opacity: 1;
+}
+.card:hover .thumbnail,
+.card:focus-visible .thumbnail {
+  filter: brightness(1.03) saturate(1.06);
+}
+
+/* ── Skeleton shimmer (light theme) ──────────────────────── */
+.skeleton {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: #e4e4e4;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  transition: opacity 450ms ease;
+}
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(227, 5, 19, 0.07) 30%,
+    rgba(255, 200, 200, 0.22) 50%,
+    rgba(227, 5, 19, 0.07) 70%,
+    transparent 100%
+  );
+  animation: skGlint 1.9s ease-in-out infinite;
+}
+.skeletonLoaded {
+  opacity: 0;
+  pointer-events: none;
+}
+/* Stop shimmer animation as soon as thumbnail is ready — it kept
+   running even at opacity:0, wasting GPU resources on every loaded card */
+.skeletonLoaded::after {
+  animation: none;
+}
+@keyframes skGlint {
+  from { transform: translateX(-170%); }
+  to   { transform: translateX(220%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after { animation: none; }
+}
+
+/* ── Play overlay ─────────────────────────────────────────── */
+.playOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0);
+  border-radius: inherit;
+  pointer-events: none;
+  transition: background 280ms ease;
+}
+.card:hover .playOverlay,
+.card:focus-visible .playOverlay {
+  background: rgba(0, 0, 0, 0.10);
+}
+
+/* ── Play button circle ───────────────────────────────────── */
+.playBtn {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 4px 18px rgba(0, 0, 0, 0.20),
+    0 0 0 1px rgba(255, 255, 255, 0.28);
+  transform: scale(0.88);
+  transition:
+    transform     280ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    background    280ms ease,
+    box-shadow    280ms ease;
+}
+.card:hover .playBtn,
+.card:focus-visible .playBtn {
+  transform: scale(1);
+  background: rgba(255, 255, 255, 1);
+  box-shadow:
+    0 8px 28px rgba(227, 5, 19, 0.26),
+    0 2px 8px rgba(0, 0, 0, 0.10),
+    0 0 0 1px rgba(227, 5, 19, 0.18);
+}
+.playIcon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-brand-red, #e30513);
+  transform: translateX(1px); /* optical center for triangle */
+  fill: currentColor;
+}
+
+/* ── Duration badge ───────────────────────────────────────── */
+.duration {
+  position: absolute;
+  bottom: 8px;
+  right: 9px;
+  z-index: 4;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.60);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  line-height: 1.65;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity 300ms ease 100ms, transform 300ms ease 100ms;
+}
+.durationVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Hover border ring ────────────────────────────────────── */
+.cardRing {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border-radius: inherit;
+  border: 1.5px solid transparent;
+  transition: border-color 280ms ease;
+}
+.card:hover .cardRing {
+  border-color: rgba(227, 5, 19, 0.42);
+}
+
+/* ── Card footer (label) ──────────────────────────────────── */
+.footer {
+  padding: 9px 3px 3px;
+}
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #5a5a5a;
+  line-height: 1.4;
+  transition: color 240ms ease;
+}
+.card:hover .label,
+.card:focus-visible .label {
+  color: var(--color-brand-red, #e30513);
+}

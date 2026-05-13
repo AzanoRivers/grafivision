@@ -42,7 +42,7 @@ export function SubscribeForm({
           type="email"
           placeholder={placeholder}
           autoComplete="email"
-          className="w-full rounded-lg border px-4 py-2.5 text-sm bg-transparent text-white placeholder-white/50 outline-none transition-colors focus:border-white"
+          className="w-full rounded-lg border px-4 py-2.5 text-base bg-transparent text-white placeholder-white/50 outline-none transition-colors focus:border-white"
           style={{ borderColor: errors.email ? 'var(--color-state-error)' : 'rgba(255,255,255,0.35)' }}
         />
         {errors.email && (

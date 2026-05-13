@@ -129,6 +129,14 @@ export function ProductLightbox({ images, startIndex, onClose }: Props) {
     })
   }, [])
 
+  // Preload all images immediately — lightbox context means user intends to browse
+  useEffect(() => {
+    images.forEach(src => {
+      const img = new window.Image()
+      img.src = src
+    })
+  }, [images])
+
   const overlayRef    = useRef<HTMLDivElement>(null)
   const cardDoms      = useRef<Map<number, HTMLButtonElement>>(new Map())
   const cardInnerDoms = useRef<Map<number, HTMLDivElement>>(new Map())
@@ -150,8 +158,9 @@ export function ProductLightbox({ images, startIndex, onClose }: Props) {
     applyCardTransforms(cardDoms.current, cardInnerDoms.current, offsetRef.current, total, viewportW.current)
   }, [mounted, total])
 
-  const FRICTION = 0.76
-  const SNAP_VEL = 0.012
+  const FRICTION    = 0.76   // accumulated offset = F*(vel-SNAP_VEL)/(1-F) = 0.532 > 0.5 ✓
+  const SNAP_VEL    = 0.012  // low threshold: full physics decay before snap phase
+  const LERP_FACTOR = 0.45   // faster lerp convergence (was lower before, still correct)
 
   const startAnimation = useCallback(() => {
     cancelAnimationFrame(rafIdRef.current)
@@ -176,7 +185,7 @@ export function ProductLightbox({ images, startIndex, onClose }: Props) {
             setCurrent(snapTo)
             return
           }
-          offsetRef.current += diff * 0.26
+          offsetRef.current += diff * LERP_FACTOR
           offsetRef.current  = ((offsetRef.current % total) + total) % total
           applyCardTransforms(cardDoms.current, cardInnerDoms.current, offsetRef.current, total, viewportW.current)
           rafIdRef.current = requestAnimationFrame(lerp)
@@ -223,20 +232,68 @@ export function ProductLightbox({ images, startIndex, onClose }: Props) {
     return () => el.removeEventListener('wheel', handler)
   }, [mounted, startAnimation])
 
-  const touchStartX = useRef(0)
-  const onTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX }
-  const onTouchEnd   = (e: React.TouchEvent) => {
-    const dx = e.changedTouches[0].clientX - touchStartX.current
-    if (dx < -50) goNext()
-    if (dx >  50) goPrev()
-  }
+  const touchStartX      = useRef(0)
+  const touchStartOffset = useRef(0)
+
+  // Imperative touch handlers — passive:false on move allows e.preventDefault()
+  // which stops page scroll while dragging inside the lightbox
+  useEffect(() => {
+    if (!mounted) return
+    const el = overlayRef.current
+    if (!el) return
+
+    const onStart = (e: TouchEvent) => {
+      touchStartX.current      = e.touches[0].clientX
+      touchStartOffset.current = offsetRef.current
+      cancelAnimationFrame(rafIdRef.current)
+      velRef.current = 0
+    }
+
+    const onMove = (e: TouchEvent) => {
+      e.preventDefault()
+      const dx          = e.touches[0].clientX - touchStartX.current
+      const sensitivity = viewportW.current * 0.55   // px to traverse one full slot
+      let newOff        = touchStartOffset.current - dx / sensitivity
+      newOff            = ((newOff % total) + total) % total
+      offsetRef.current = newOff
+      applyCardTransforms(cardDoms.current, cardInnerDoms.current, newOff, total, viewportW.current)
+      const rounded = ((Math.round(newOff) % total) + total) % total
+      setCurrent(prev => prev === rounded ? prev : rounded)
+    }
+
+    const onEnd = (e: TouchEvent) => {
+      const dx          = e.changedTouches[0].clientX - touchStartX.current
+      const sensitivity = viewportW.current * 0.55
+      const drag        = -dx / sensitivity
+      // Threshold 0.3 slots: commit swipe; below that, spring back to nearest slot
+      velRef.current    = drag > 0.3 ? 0.18 : drag < -0.3 ? -0.18 : 0
+      startAnimation()
+    }
+
+    el.addEventListener('touchstart', onStart, { passive: true })
+    el.addEventListener('touchmove',  onMove,  { passive: false })
+    el.addEventListener('touchend',   onEnd,   { passive: true })
+    return () => {
+      el.removeEventListener('touchstart', onStart)
+      el.removeEventListener('touchmove',  onMove)
+      el.removeEventListener('touchend',   onEnd)
+    }
+  }, [mounted, total, startAnimation])
 
   useEffect(() => {
-    const saved = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+    const savedOverflow = document.body.style.overflow
+    const savedPadding  = document.body.style.paddingRight
+    // Compensate for scrollbar disappearing — prevents layout shift
+    const scrollbarW    = window.innerWidth - document.documentElement.clientWidth
+    document.body.style.overflow     = 'hidden'
+    document.body.style.paddingRight = `${scrollbarW}px`
     const blockCtx = (e: MouseEvent) => e.preventDefault()
     document.addEventListener('contextmenu', blockCtx)
-    return () => { document.body.style.overflow = saved; document.removeEventListener('contextmenu', blockCtx) }
+    return () => {
+      document.body.style.overflow     = savedOverflow
+      document.body.style.paddingRight = savedPadding
+      document.removeEventListener('contextmenu', blockCtx)
+    }
   }, [])
 
   type Slot = 'prevPrev' | 'prev' | 'active' | 'next' | 'nextNext'
@@ -254,8 +311,6 @@ export function ProductLightbox({ images, startIndex, onClose }: Props) {
     <div
       ref={overlayRef}
       className={`${styles.overlay}${isClosing ? ' ' + styles.overlayClosing : ''}`}
-      onTouchStart={onTouchStart}
-      onTouchEnd={onTouchEnd}
       role="dialog"
       aria-modal="true"
       aria-label="Visor de productos"
@@ -306,7 +361,7 @@ export function ProductLightbox({ images, startIndex, onClose }: Props) {
                   src={src}
                   alt={`Producto ${realIdx + 1}`}
                   className={styles.img}
-                  loading="lazy"
+                  loading="eager"
                   decoding="async"
                   onLoad={() => markLoaded(realIdx)}
                 />
